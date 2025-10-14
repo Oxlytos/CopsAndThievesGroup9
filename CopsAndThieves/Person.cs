@@ -8,5 +8,6 @@ namespace CopsAndThieves
 {
     internal class Person
     {
+
     }
 }
