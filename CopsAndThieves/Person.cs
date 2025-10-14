@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CopsAndThieves
 {
-    internal class Person
+    public class Person
     {
         public string FirstName { get; set; }
         public string SurName { get; set; }
