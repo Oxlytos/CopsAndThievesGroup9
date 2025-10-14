@@ -16,28 +16,32 @@ namespace CopsAndThieves
         {
             Console.WriteLine("City");
 
-            for(int i = 0; i<100; i++)
+            for(int i = 0; i<10; i++)
             {
-                bool writeHash = true;
-               // Console.WriteLine("#");
+               // bool writeHash = true;
+               //Roof
+                Console.Write(".");
 
-                for(int j = 0; j < 100; j++)
-                {
-                    if (writeHash)
-                    {
-                        Console.Write("#");
-                    }
-                    else
-                    {
-                        Console.Write("$");
-                    }
-
-                    writeHash = !writeHash;
-                }
-                Console.WriteLine();
+              
+                //Console.WriteLine();
             }
-        
-        
+            for (int j = 0; j < 10; j++)
+            {
+                Console.WriteLine(".");
+
+                //  writeHash = !writeHash;
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                // bool writeHash = true;
+                //Roof
+                Console.Write(".");
+
+
+                //Console.WriteLine();
+            }
+
+
         }
 
     }
