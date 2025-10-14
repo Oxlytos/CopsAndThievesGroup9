@@ -18,6 +18,9 @@ namespace CopsAndThieves
         {
             Console.WriteLine("City");
 
+            Person police = new Police("Erik", "Eriksson");
+
+
             string symbolForRoof = "=";
             string symbolForPillar = "X";
             //Draw along the X axis
