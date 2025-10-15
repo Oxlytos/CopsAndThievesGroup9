@@ -12,6 +12,7 @@ namespace CopsAndThieves
         {
             Console.WriteLine("Ser du detta har jag commitat från en annan dator och pushat några skillnader");
             CitySimulation.Run();
+            GeneratePerson.TestRun();
         }
 
 
