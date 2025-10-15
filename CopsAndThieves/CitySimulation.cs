@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Unicode;
 using System.Threading.Tasks;
+
 
 namespace CopsAndThieves
 {
@@ -12,53 +13,52 @@ namespace CopsAndThieves
         static int width = 30;
         static int height = 10;
 
-        int[,] citySize = { { 100 }, { 100 } };
-
         public static void Run()
         {
             Console.WriteLine("City");
 
+            // Skapa en agent
             Person police = new Police("Erik", "Eriksson");
+            int policeX = 5;
+            int policeY = 3;
 
+            // Rita staden med agenten
+            DrawCity(police, policeX, policeY);
+        }
 
-            string symbolForRoof = "=";
-            string symbolForPillar = "X";
-            //Draw along the X axis
+        static void DrawCity(Person agent, int agentX, int agentY)
+        {
+            string wall = "🧱";
+            string empty = "⬜";
+
+            // Tak
+            Console.ForegroundColor = ConsoleColor.Green;
+            for (int x = 0; x <= width + 1; x++) Console.Write(wall);
+            Console.WriteLine();
+
+            // Rutnät
+            for (int y = 0; y < height; y++)
+            {
                 Console.ForegroundColor = ConsoleColor.Green;
-            for(int z = 0; z <= width+1; z++)
-            {
-                Console.Write($"{symbolForRoof}");
-            }
-               
+                Console.Write(wall);
+                Console.ForegroundColor = ConsoleColor.White;
 
-                //Change line after loop is done
-
-                Console.WriteLine();
-                //Y Axis part that uses WriteLine
-                //Handles the height of a grid, left and right
-                for (int innerWall = 0; innerWall < height; innerWall++)
+                for (int x = 0; x < width; x++)
                 {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write($"{symbolForPillar}");
-                for (int space = 0; space < width; space++) 
-                {
-                    Console.Write(".");
-                }
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"{symbolForPillar}");
+                    if (x == agentX && y == agentY)
+                        Console.Write(agent.Sprite);
+                    else
+                        Console.Write(empty);
                 }
 
-                //Bottom part of the wholass graphic
-                //Like the roof, outside its loop in this case
-            for (int col = 0; col <= width+1; col++)
-            {
-                
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write($"{symbolForRoof}");
-
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(wall);
             }
+
+            // Botten
+            for (int x = 0; x <= width + 1; x++) Console.Write(wall);
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
-
         }
     }
 }

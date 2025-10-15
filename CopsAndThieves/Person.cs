@@ -8,10 +8,11 @@ namespace CopsAndThieves
 {
     public class Person
     {
+
         public string FirstName { get; set; }
         public string SurName { get; set; }
         public List<string> Inventory { get; set; }
-        public string Sprite { get; set; }
+        public string Sprite { get; set; } = "⬜";
 
         void Move()
         {
@@ -19,14 +20,14 @@ namespace CopsAndThieves
         }
     }
 
-    class Police : Person
+    public class Police : Person
     {
         public Police(string fName, string sName)
         {
 
             FirstName = fName;
             SurName = sName;
-            Sprite = "P";
+            Sprite = "👮";
         }
 
 
@@ -37,61 +38,43 @@ namespace CopsAndThieves
         }
     }
 
-    class Theif : Person
+    public class Theif : Person
     {
 
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public List<string> Inventory { get; set; }
-        public static string Sprite { get; set; }
-    }
-
-    class Police : Person
-    {
-        //Sprite = "P";
-        void Arrest() { }
-    }
-
-    class Theif : Person
-    {
-        void Steal() { }
-    }
-
-    class Citizen : Person
-    {
-        void Greet() { }
-    }
-
-
-
-
-    public Theif(string fName, string sName) 
-    {
-          FirstName = fName;
-          SurName = sName;
-          Sprite = "T";
-    }
-
-        //Steal from a citizen
-    void Steal() 
-    {
-        
-    }
-    
-
-    class Citizen : Person
-    {
-        public Citizen(string fName, string sName) 
+        public Theif(string fName, string sName)
         {
             FirstName = fName;
             SurName = sName;
-            Sprite = "C";
+            Sprite = "🕵️";
         }
 
-        
+        //Steal from a citizen
+        void Steal()
+        {
+
+        }
+    }
+
+    public class Citizen : Person
+    {
+        public Citizen(string fName, string sName)
+        {
+            FirstName = fName;
+            SurName = sName;
+            Sprite = "🧍";
+        }
+
+        //Citizens greet either another citizen or a cop
         void Greet() { }
     }
+
 }
+
+
+
+
+
+
 
 
 
