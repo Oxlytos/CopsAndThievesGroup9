@@ -8,10 +8,11 @@ namespace CopsAndThieves
 {
     public class Person
     {
+
         public string FirstName { get; set; }
         public string SurName { get; set; }
         public List<string> Inventory { get; set; }
-        public string Sprite { get; set; }
+        public string Sprite { get; set; } = "⬜";
 
         void Move()
         {
@@ -19,48 +20,48 @@ namespace CopsAndThieves
         }
     }
 
-    class Police : Person
+    public class Police : Person
     {
-        public Police(string fName, string sName) 
+        public Police(string fName, string sName)
         {
-        
+
             FirstName = fName;
             SurName = sName;
-            Sprite = "P";
+            Sprite = "👮";
         }
 
 
         //Arrest a criminal
-        void Arrest() 
+        void Arrest()
         {
-        
+
         }
     }
-    
-    class Theif : Person
+
+    public class Theif : Person
     {
 
-        public Theif(string fName, string sName) 
+        public Theif(string fName, string sName)
         {
             FirstName = fName;
             SurName = sName;
-            Sprite = "T";
+            Sprite = "🕵️";
         }
 
         //Steal from a citizen
-        void Steal() 
+        void Steal()
         {
-        
+
         }
     }
 
-    class Citizen : Person
+    public class Citizen : Person
     {
-        public Citizen(string fName, string sName) 
+        public Citizen(string fName, string sName)
         {
             FirstName = fName;
             SurName = sName;
-            Sprite = "C";
+            Sprite = "🧍";
         }
 
         //Citizens greet either another citizen or a cop
@@ -68,3 +69,12 @@ namespace CopsAndThieves
     }
 
 }
+
+
+
+
+
+
+
+
+
