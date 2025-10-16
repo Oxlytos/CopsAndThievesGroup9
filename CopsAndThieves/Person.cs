@@ -14,9 +14,30 @@ namespace CopsAndThieves
         public List<string> Inventory { get; set; }
         public string Sprite { get; set; } = "⬜";
 
-        void Move()
-        {
 
+        //Position variable
+        public int PosX, PosY;
+
+        public void SpawnRandomPosition()
+        {
+            Random rand = new Random();
+            int x = rand.Next(0, 20);
+            int y = rand.Next(0, 10);
+
+            PosX = x;
+            PosY = y;
+
+
+        }
+
+        public void Move()
+        {
+            if(this.PosY > CitySimulation.height-2)
+            {
+                PosY = -1;
+            }
+            //Move method
+            PosY++;
         }
     }
 

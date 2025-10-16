@@ -10,55 +10,96 @@ namespace CopsAndThieves
 {
     internal class CitySimulation
     {
-        static int width = 30;
-        static int height = 10;
+        public static int width = 30;
+        public static int height = 10;
 
         public static void Run()
         {
             Console.WriteLine("City");
 
+            List<Police> thePolice = new List<Police>();
+
+            for (int i = 0; i < 7; i++) 
+            {
+                thePolice.Add(GeneratePerson.GenerateRandomPolice());
+            
+            }
+            foreach (Police policeObj in thePolice) 
+            {
+                Console.WriteLine($"{policeObj.FirstName} {policeObj.SurName}has arrived at the scene \n");
+                policeObj.SpawnRandomPosition();
+            
+            }
+
             // Skapa en agent
-            Person police = new Police("Erik", "Eriksson");
-            int policeX = 5;
-            int policeY = 3;
+            Person police = GeneratePerson.GenerateRandomPolice();
+
+
+            //Basic initial random position
+
+            //Set a random position at the start
+            police.SpawnRandomPosition();
+
 
             // Rita staden med agenten
-            DrawCity(police, policeX, policeY);
+            DrawCity(police);
         }
 
-        static void DrawCity(Person agent, int agentX, int agentY)
+        static void DrawCity(Person agent)
         {
             string wall = "🧱";
             string empty = "⬜";
 
-            // Tak
-            Console.ForegroundColor = ConsoleColor.Green;
-            for (int x = 0; x <= width + 1; x++) Console.Write(wall);
-            Console.WriteLine();
+            
 
-            // Rutnät
-            for (int y = 0; y < height; y++)
+            //Decide a place to stand
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write(wall);
-                Console.ForegroundColor = ConsoleColor.White;
-
-                for (int x = 0; x < width; x++)
+                if(agent.PosY < 0 || agent.PosY <= height-1)
                 {
-                    if (x == agentX && y == agentY)
-                        Console.Write(agent.Sprite);
-                    else
-                        Console.Write(empty);
+                    agent.Move();
+                }
+               
+                // Tak
+                Console.ForegroundColor = ConsoleColor.Green;
+                for (int x = 0; x <= width + 1; x++) Console.Write(wall);
+                Console.WriteLine();
+
+                // Rutnät
+                for (int y = 0; y < height; y++)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(wall);
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    for (int x = 0; x < width; x++)
+                    {
+                        if (x == agent.PosX && y == agent.PosY)
+                            Console.Write(agent.Sprite);
+                        else
+                            Console.Write(empty);
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(wall);
                 }
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(wall);
-            }
+                // Botten
+                for (int x = 0; x <= width + 1; x++) Console.Write(wall);
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Police position is: {agent.PosY}");
 
-            // Botten
-            for (int x = 0; x <= width + 1; x++) Console.Write(wall);
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Police {agent.FirstName} has;");
+                for(int p = 0; p<agent.Inventory.Count; p++)
+                {
+                    Console.WriteLine(agent.Inventory.ElementAt(p));
+                }
+               
+                Console.Write("\n");
+                Console.ReadLine();
+                Console.Clear();
+                }
         }
     }
 }

@@ -143,11 +143,13 @@ namespace CopsAndThieves
 
             //In their inventory becomes a new empty list
             pol.Inventory = new List<string>();
-
+            pol.Inventory.Add("Handgun");
 
             //Until there's 3 items in their inventory
             while (pol.Inventory.Count < 3) 
             {
+
+            
                 //Dummy item class for testing
                 string exampleItem = new DummyItem().PossibleName;
 
