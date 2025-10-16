@@ -32,12 +32,48 @@ namespace CopsAndThieves
 
         public void Move()
         {
-            if(this.PosY > CitySimulation.height-2)
+
+            Random rand = new Random();
+
+            int x =rand.Next(-1, 2);
+            int y = rand.Next(-1, 2);
+
+            Console.WriteLine($"Trying to move with x: {x} and y: {y}");
+            //Limits class that checks if said person can walk there, don't cross city limits
+
+
+
+            //Bottom
+            if(this.PosY > CitySimulation.height-1)
             {
                 PosY = -1;
             }
+
+            //Ceiling
+            if (this.PosY < 0)
+            {
+                PosY = CitySimulation.height;
+            }
+
+            //Right city limit
+            if (this.PosX > CitySimulation.width - 1)
+            {
+                PosX = 0;
+            
+            }
+
+            if(this.PosX < 0)
+            {
+                PosX = CitySimulation.width;
+            }
             //Move method
-            PosY++;
+
+            //If pos is 5 => 5 - 1
+            PosX += x;
+            PosY += y;
+           // PosX--;
+            //PosY--;
+            //PosY++;
         }
     }
 

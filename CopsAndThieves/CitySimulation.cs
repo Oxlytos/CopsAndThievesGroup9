@@ -33,6 +33,7 @@ namespace CopsAndThieves
 
             // Skapa en agent
             Person police = GeneratePerson.GenerateRandomPolice();
+            Theif harald = new Theif("Harald", "Tjuven");
 
 
             //Basic initial random position
@@ -42,7 +43,7 @@ namespace CopsAndThieves
 
 
             // Rita staden med agenten
-            DrawCity(police);
+            DrawCity(harald);
         }
 
         static void DrawCity(Person agent)
@@ -55,10 +56,8 @@ namespace CopsAndThieves
             //Decide a place to stand
             while (true)
             {
-                if(agent.PosY < 0 || agent.PosY <= height-1)
-                {
+                
                     agent.Move();
-                }
                
                 // Tak
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -90,11 +89,11 @@ namespace CopsAndThieves
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Police position is: {agent.PosY}");
 
-                Console.WriteLine($"Police {agent.FirstName} has;");
+             /*   Console.WriteLine($"Police {agent.FirstName} has;");
                 for(int p = 0; p<agent.Inventory.Count; p++)
                 {
                     Console.WriteLine(agent.Inventory.ElementAt(p));
-                }
+                }*/
                
                 Console.Write("\n");
                 Console.ReadLine();
