@@ -125,6 +125,28 @@ namespace CopsAndThieves
             return person;
         }
 
+        public static Citizen GenerateRandomCititzen()
+        {
+           
+
+            //Random instance thing to use
+            Random random = new Random();
+
+
+            //First name is this names(withIndex)
+            string fname = GetFirstName(random);
+            string sName = GetSurName(random);
+
+            //Creating something to return
+            Citizen person = new Citizen(fname,sName);
+
+            person.FirstName = fname;
+            person.SurName = sName;
+
+
+            return person;
+        }
+
         //Generating a police is similar but a bit different
         public static Police GenerateRandomPolice()
         {
@@ -143,6 +165,7 @@ namespace CopsAndThieves
 
             //In their inventory becomes a new empty list
             pol.Inventory = new List<string>();
+            //pol.SpawnRandomPosition();
             pol.Inventory.Add("Handgun");
 
             //Until there's 3 items in their inventory
