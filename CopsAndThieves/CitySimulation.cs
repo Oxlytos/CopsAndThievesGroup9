@@ -22,14 +22,32 @@ namespace CopsAndThieves
         static List<Citizen> citizens = new List<Citizen>();
         static List<Theif> theives = new List<Theif>();
 
+        static NewsFeed feed = new NewsFeed(height + 5, Console.WindowWidth);
+
         public static void Run()
         {
-            Console.WriteLine("City");
+            //Create some people
+            CreatePeople();
 
+            //No visible cursor
             Console.CursorVisible = false;
 
+            //Draw city with some dimensions
+            DrawCity(width, height);
+          
+            //Constantly draw people as they do "logic"/stuff
+            while (true) 
+            {
+                DrawInhabitants();
+                //Pause each turn
+                Thread.Sleep(200);
+            
+            }
+        }
 
-            for(int i= 0; i<= maxAmountOfCivllians; i++)
+        static void CreatePeople()
+        {
+            for (int i = 0; i <= maxAmountOfCivllians; i++)
             {
                 //Create citizen, add to list
                 citizens.Add(GeneratePerson.GenerateRandomCititzen());
@@ -37,197 +55,119 @@ namespace CopsAndThieves
                 //Creates a random spawn point
                 citizens.ElementAt(i).SpawnRandomPosition(width, height);
 
-
                 //Add citizen(i) till main list
-                allPeopple.Append(citizens.ElementAt(i));
+                allPeopple.Add(citizens.ElementAt(i));
             }
 
-
-            for (int i = 0; i <= maxAmountOfCivllians/3; i++) 
+            //Every 3 people spawns a cop at the start
+            for (int i = 0; i <= maxAmountOfCivllians / 3; i++)
             {
                 thePolice.Add(GeneratePerson.GenerateRandomPolice());
-                thePolice.ElementAt(i).SpawnRandomPosition(width,height);
+                thePolice.ElementAt(i).SpawnRandomPosition(width, height);
 
-                allPeopple.Append(citizens.ElementAt(i));
+                allPeopple.Add(thePolice.ElementAt(i));
 
-            
+
             }
 
-            for(int i= 0; i<= maxAmountOfCivllians/4; i++)
+            //Every 4 people create a theif
+            for (int i = 0; i <= maxAmountOfCivllians / 4; i++)
             {
                 theives.Add(GeneratePerson.GenerateRandomTheif());
                 theives.ElementAt(i).SpawnRandomPosition(width, height);
 
-                allPeopple.Append(theives.ElementAt(i));
+                allPeopple.Add(theives.ElementAt(i));
             }
 
-
-            List<Person> persons = new List<Person>();
-            persons.Add(GeneratePerson.GenerateRandomPerson());
-            persons.Add(GeneratePerson.GenerateRandomPolice());
-
-            // Skapa en agent
-            //Person police = GeneratePerson.GenerateRandomPolice();
-            Theif harald = new Theif("Harald", "Tjuven");
-
-
-            //Basic initial random position
-
-            //Set a random position at the start
-           // police.SpawnRandomPosition();
-
-
-            // Rita staden med agenten
-            DrawCity(harald);
         }
 
-        static void DrawCity(Person agent)
+        static void DrawCity(int dimensionX, int dimensionY)
         {
             Console.Clear();
             string wall = "🧱";
             string empty = "⬜";
 
-            
 
-            //Decide a place to stand
-            while (true)
-            {
-                agent.Move(width, height);
-               
-                // Tak
-                Console.ForegroundColor = ConsoleColor.Green;
-                for (int x = 0; x <= width + 1; x++) Console.Write(wall);
+                // Top
+                for (int x = 0; x <= width + 1; x++)
+                {
+                    Console.Write(wall);
+                }
                 Console.WriteLine();
 
-                // Rutnät
+                // Middle part with walls and empty spaces
                 for (int y = 0; y < height; y++)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(wall);
-                    Console.ForegroundColor = ConsoleColor.White;
-
                     for (int x = 0; x < width; x++)
                     {
-                        //if (x == agent.PosX && y == agent.PosY)
-                          //  Console.Write(agent.Sprite);
-                        //else
                             Console.Write(empty);
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine(wall);
                 }
 
-                // Botten
-                for (int x = 0; x <= width + 1; x++) Console.Write(wall);
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Police position is: {agent.PosY}");
-
-              
-               
-                Console.Write("\n");
-                DrawInhabitants();
-
-                Thread.Sleep(1000);
-                Console.Clear();
+                // Bottom
+                for (int x = 0; x <= width + 1; x++) 
+                {
+                    Console.Write(wall); 
                 }
+                Console.WriteLine();
+
         }
         static void DrawInhabitants()
         {
             //Draw the people in the city ON the city graphic
-            Console.WriteLine($"Amount of cops in the city: {thePolice.Count}");
-            Console.WriteLine($"Map limit is {width} by {height}");
 
-
-
-            //Move part
-            foreach(Citizen ciz in citizens)
+            //Remove all sprites
+            //Write empty thing
+            foreach (var pop in allPeopple)
             {
-                ciz.Move(width, height);
+                Console.BackgroundColor = ConsoleColor.Black;
+                // Erase old position
+                Console.SetCursorPosition(pop.PosX * 2, pop.PosY + 1);
+                //Write emoji
+                Console.Write("⬜");
+
+                // Move after erase
+                pop.Move(width, height);
+
+                // Draw at new position
+                Console.SetCursorPosition(pop.PosX * 2, pop.PosY + 1);
+                Console.Write(pop.Sprite);
             }
 
-            foreach(Police pig in thePolice)
-            {
-
-                pig.Move(width, height);
-            }
-            foreach(Theif thif in theives)
-            {
-                thif.Move(width, height);
-            }
-            //////////////////////////////////////////////////////////////////////////
-            ///
-
-            ///Draw part
-            ////////////////////////////////////////////////////////////////////////
-
-            for(int y = 0; y <= height; y++)
-            {
-                //Brick Emoji is 2 spaces wide
-                //Take into account when printing and managing the sprites/objects movements
-                //Aka 10 bricks = 20 spaces => 20 bricks = 40 spaces
-                //Handle width with a multiplier of 2
-                for(int x = 0; x <= width*2; x++)
-                {
-                    foreach (Police pol in thePolice) 
-                    {
-                       
-                        if (pol.PosX == x && pol.PosY == y)
-                        {
-                            Console.SetCursorPosition(x, y);
-                            
-                            
-                            Console.Write(pol.Sprite);
-                        }
-                     //   Console.Write($"Police at {pol.PosX}{pol.PosY}");
-                    }
-
-                    foreach (Citizen ciziten in citizens)
-                    {
+            List<(int, int)> collisions = DetectCollisions();
 
 
-                        if (ciziten.PosX == x && ciziten.PosY == y)
-                        {
-                            Console.SetCursorPosition(x, y);
+            DrawCollisions(collisions);
 
-
-                            Console.Write(ciziten.Sprite);
-                        }
-                        //   Console.Write($"Police at {pol.PosX}{pol.PosY}");
-                    }
-
-                    foreach(Theif theif in theives)
-                    {
-                        if(theif.PosX == x && theif.PosY == y)
-                        {
-                            Console.SetCursorPosition(x, y);
-                            Console.Write(theif.Sprite);
-                        }
-                    }
-
-
-                }
-
-            }
             /////Greet/Collision part
             //////////////////////////////////////////////////////////
-
-            Console.SetCursorPosition(0, height+5);
-            Console.WriteLine("🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺NEWSFEED🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺");
+            ///
            
 
-            foreach(Citizen ciz in citizens)
+            //Citizen greet eachother 
+            //In all citizens
+            foreach (Citizen ciz in citizens)
             {
+                //Nested loop to check other citizens with X citizen we have
                 foreach (Citizen hitPerson in citizens)
                 {
+                    //If we're not the same person i both lists
                     if (ciz != hitPerson)
                     {
+                        //If we've collided
                         if (ciz.PosX == hitPerson.PosX && ciz.PosY == hitPerson.PosY)
                         {
-                            ciz.Greet(hitPerson.FirstName, ciz.PosX, ciz.PosY);
-                          //  Console.Beep();
+
+                            //Do the greet
+                            string msg = ciz.Greet(hitPerson.FirstName, ciz.PosX, ciz.PosY);
+                            feed.AddMsg(msg);
                             Thread.Sleep(1000);
+                          
+                          //  Console.Beep();
+                          //Pause
                         }
                     }
                     else
@@ -236,17 +176,18 @@ namespace CopsAndThieves
                     }
                 }
             }
+            //Police greetings
             foreach(Police polA in thePolice)
             {
+                //Check police A collides with other police
                 foreach (Police polB in thePolice) 
                 {
                     if(polB != polA)
                     {
                         if(polB.PosX == polA.PosX && polB.PosY == polA.PosY)
                         {
-                            polA.GreetPolice(polB.SurName, polB.PosX, polB.PosY);
+                           // polA.GreetPolice(polB.SurName, polB.PosX, polB.PosY);
                           //  Console.Beep();
-                            Thread.Sleep(2000);
                         }
                     }
                 
@@ -257,7 +198,64 @@ namespace CopsAndThieves
 
 
         }
+
+        //Handle Collision
+        static List<(int,int)> DetectCollisions()
+        {
+            //2d list
+            var listOfCollisionPositions = new List<(int, int)>();
+
+            //Foreach or For loop
+            //Check if subject A or I has hit another
+            //If a for loop, count from 0-max (0 is person number 0 could be Erik Eriksson)
+            //As it's nested make sure to check that its different number => Erik Eriksson shouldn't collide with himself
+            //Basic check with thingA != thingB => then add
+            for(int subjectA = 0; subjectA < allPeopple.Count; subjectA++)
+            {
+                //Subject B or J
+                for(int subjectB = 0; subjectB < allPeopple.Count; subjectB++)
+                {
+                    if (subjectA != subjectB)
+                    {
+                        //If they have the exact same X and Y coordinates
+                        if (allPeopple[subjectA].PosX == allPeopple[subjectB].PosX &&
+                            allPeopple[subjectA].PosY == allPeopple[subjectB].PosY)
+                        {
+                            //They've collided
+                            listOfCollisionPositions.Add((allPeopple[subjectA].PosX, allPeopple[subjectA].PosY));
+                        }
+                    }
+                    
+                }
+            }
+
+
+            return listOfCollisionPositions.Distinct().ToList();
+        }
+        static void DrawCollisions(List<(int x, int y)> listOfCollisionPositions)
+        {
+            //Var becuase let God handle the type
+            foreach (var collisionPoint in listOfCollisionPositions) 
+            {
+                //The old colors
+                var oldBg = Console.BackgroundColor;
+                var oldFg = Console.ForegroundColor;
+
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.White;
+
+                //Handle the damn emoji size
+                Console.SetCursorPosition(collisionPoint.x * 2, collisionPoint.y + 1);
+                Console.Write("💥");
+
+                // Reset colors to initial type
+                Console.BackgroundColor = oldBg;
+                Console.ForegroundColor = oldFg;
+            }
+        }
     }
+
+   
 
     
 }

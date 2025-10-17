@@ -8,7 +8,7 @@ namespace CopsAndThieves
 {
     internal class GeneratePerson
     {
-
+        static Random random = new Random();
         public static void TestRun()
         {
             //People in the city
@@ -103,6 +103,26 @@ namespace CopsAndThieves
             "Shadid", "Hosseini", "Bakir", "Al-Mansouri"
         };
 
+        static string RandomSprite()
+        {
+            string[] sprites = { // Person standing (neutral)
+            "🧍",
+            "🧍🏻", "🧍🏼", "🧍🏽", "🧍🏾", "🧍🏿",
+
+            // Woman standing
+            "🧍‍♀️",
+            "🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️",
+
+            // Man standing
+            "🧍‍♂️",
+            "🧍🏻‍♂️", "🧍🏼‍♂️", "🧍🏽‍♂️", "🧍🏾‍♂️", "🧍🏿‍♂️"};
+
+            int randInd = random.Next(0, sprites.Length);
+            string randomSprite = sprites[randInd];
+            return randomSprite;
+
+        }
+
 
         //Generate basic person with random name
         public static Person GenerateRandomPerson()
@@ -111,16 +131,17 @@ namespace CopsAndThieves
             Person person = new Person();
 
             //Random instance thing to use
-            Random random = new Random();
+           
 
 
             //First name is this names(withIndex)
-            string fname =  GetFirstName(random);
-            string sName = GetSurName(random);
+            string fname =  GetFirstName();
+            string sName = GetSurName();
+            string sprite = RandomSprite();
 
             person.FirstName = fname;
             person.SurName = sName;
-
+            person.Sprite = sprite; 
             
             return person;
         }
@@ -130,18 +151,19 @@ namespace CopsAndThieves
            
 
             //Random instance thing to use
-            Random random = new Random();
 
 
             //First name is this names(withIndex)
-            string fname = GetFirstName(random);
-            string sName = GetSurName(random);
+            string fname = GetFirstName();
+            string sName = GetSurName();
+            string sprite = RandomSprite();
 
             //Creating something to return
             Citizen person = new Citizen(fname,sName);
 
             person.FirstName = fname;
             person.SurName = sName;
+            person.Sprite = sprite;
 
 
             return person;
@@ -155,8 +177,8 @@ namespace CopsAndThieves
 
 
             //First name is this names(withIndex)
-            string fname = GetFirstName(random);
-            string sName = GetSurName(random);
+            string fname = GetFirstName();
+            string sName = GetSurName();
 
             //Creating something to return
             Theif person = new Theif(fname, sName);
@@ -178,8 +200,8 @@ namespace CopsAndThieves
             int randomAmount = random.Next(1,10);
 
             //Their literal name rn is Konstapel Eric for ex, a title field could be used here instead
-            string fname = "Konstapel " + GetFirstName(random);
-            string sName = GetSurName(random);
+            string fname = "Konstapel " + GetFirstName();
+            string sName = GetSurName();
 
             //Create a base police with name
             Police pol = new Police(fname, sName);
@@ -210,20 +232,20 @@ namespace CopsAndThieves
         }
 
         //Return a string with a name
-        static string GetFirstName(Random rando)
+        static string GetFirstName()
         {
             //Index in relation to total length of the array
-            int fNameIndex = rando.Next(firstNames.Length);
+            int fNameIndex = random.Next(firstNames.Length);
             string firstName = firstNames[fNameIndex];  
 
             return firstName;
         }
 
         //Surname from array of surnames
-        static string GetSurName(Random rando) 
+        static string GetSurName() 
         {
             //Index in relation to total length of the array
-            int sNameIndex = rando.Next(surNames.Length);
+            int sNameIndex = random.Next(surNames.Length);
             string surName = surNames[sNameIndex];
 
             return surName;
