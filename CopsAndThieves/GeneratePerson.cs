@@ -146,6 +146,27 @@ namespace CopsAndThieves
 
             return person;
         }
+        public static Theif GenerateRandomTheif()
+        {
+
+
+            //Random instance thing to use
+            Random random = new Random();
+
+
+            //First name is this names(withIndex)
+            string fname = GetFirstName(random);
+            string sName = GetSurName(random);
+
+            //Creating something to return
+            Theif person = new Theif(fname, sName);
+
+            person.FirstName = fname;
+            person.SurName = sName;
+
+
+            return person;
+        }
 
         //Generating a police is similar but a bit different
         public static Police GenerateRandomPolice()

@@ -15,8 +15,12 @@ namespace CopsAndThieves
 
         static int maxAmountOfCivllians = 15;
 
+
+        static List<Person> allPeopple = new List<Person>();
+
         static List<Police> thePolice = new List<Police>();
         static List<Citizen> citizens = new List<Citizen>();
+        static List<Theif> theives = new List<Theif>();
 
         public static void Run()
         {
@@ -27,25 +31,40 @@ namespace CopsAndThieves
 
             for(int i= 0; i<= maxAmountOfCivllians; i++)
             {
+                //Create citizen, add to list
                 citizens.Add(GeneratePerson.GenerateRandomCititzen());
+
+                //Creates a random spawn point
+                citizens.ElementAt(i).SpawnRandomPosition(width, height);
+
+
+                //Add citizen(i) till main list
+                allPeopple.Append(citizens.ElementAt(i));
             }
+
 
             for (int i = 0; i <= maxAmountOfCivllians/3; i++) 
             {
                 thePolice.Add(GeneratePerson.GenerateRandomPolice());
+                thePolice.ElementAt(i).SpawnRandomPosition(width,height);
+
+                allPeopple.Append(citizens.ElementAt(i));
 
             
             }
-            foreach(Citizen ciz in citizens)
+
+            for(int i= 0; i<= maxAmountOfCivllians/4; i++)
             {
-                ciz.SpawnRandomPosition(width, height);
+                theives.Add(GeneratePerson.GenerateRandomTheif());
+                theives.ElementAt(i).SpawnRandomPosition(width, height);
+
+                allPeopple.Append(theives.ElementAt(i));
             }
-            foreach (Police policeObj in thePolice) 
-            {
-                Console.WriteLine($"{policeObj.FirstName} {policeObj.SurName} has arrived at the scene \n");
-                policeObj.SpawnRandomPosition(width, height);
-            
-            }
+
+
+            List<Person> persons = new List<Person>();
+            persons.Add(GeneratePerson.GenerateRandomPerson());
+            persons.Add(GeneratePerson.GenerateRandomPolice());
 
             // Skapa en agent
             //Person police = GeneratePerson.GenerateRandomPolice();
@@ -105,17 +124,12 @@ namespace CopsAndThieves
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Police position is: {agent.PosY}");
 
-                /*   Console.WriteLine($"Police {agent.FirstName} has;");
-                   for(int p = 0; p<agent.Inventory.Count; p++)
-                   {
-                       Console.WriteLine(agent.Inventory.ElementAt(p));
-                   }*/
+              
                
                 Console.Write("\n");
                 DrawInhabitants();
 
-
-                Console.ReadLine();
+                Thread.Sleep(1000);
                 Console.Clear();
                 }
         }
@@ -125,6 +139,9 @@ namespace CopsAndThieves
             Console.WriteLine($"Amount of cops in the city: {thePolice.Count}");
             Console.WriteLine($"Map limit is {width} by {height}");
 
+
+
+            //Move part
             foreach(Citizen ciz in citizens)
             {
                 ciz.Move(width, height);
@@ -135,6 +152,15 @@ namespace CopsAndThieves
 
                 pig.Move(width, height);
             }
+            foreach(Theif thif in theives)
+            {
+                thif.Move(width, height);
+            }
+            //////////////////////////////////////////////////////////////////////////
+            ///
+
+            ///Draw part
+            ////////////////////////////////////////////////////////////////////////
 
             for(int y = 0; y <= height; y++)
             {
@@ -171,9 +197,63 @@ namespace CopsAndThieves
                         //   Console.Write($"Police at {pol.PosX}{pol.PosY}");
                     }
 
+                    foreach(Theif theif in theives)
+                    {
+                        if(theif.PosX == x && theif.PosY == y)
+                        {
+                            Console.SetCursorPosition(x, y);
+                            Console.Write(theif.Sprite);
+                        }
+                    }
+
 
                 }
+
             }
+            /////Greet/Collision part
+            //////////////////////////////////////////////////////////
+
+            Console.SetCursorPosition(0, height+5);
+            Console.WriteLine("🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺NEWSFEED🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺🎺");
+           
+
+            foreach(Citizen ciz in citizens)
+            {
+                foreach (Citizen hitPerson in citizens)
+                {
+                    if (ciz != hitPerson)
+                    {
+                        if (ciz.PosX == hitPerson.PosX && ciz.PosY == hitPerson.PosY)
+                        {
+                            ciz.Greet(hitPerson.FirstName, ciz.PosX, ciz.PosY);
+                          //  Console.Beep();
+                            Thread.Sleep(1000);
+                        }
+                    }
+                    else
+                    {
+                        //Nothing
+                    }
+                }
+            }
+            foreach(Police polA in thePolice)
+            {
+                foreach (Police polB in thePolice) 
+                {
+                    if(polB != polA)
+                    {
+                        if(polB.PosX == polA.PosX && polB.PosY == polA.PosY)
+                        {
+                            polA.GreetPolice(polB.SurName, polB.PosX, polB.PosY);
+                          //  Console.Beep();
+                            Thread.Sleep(2000);
+                        }
+                    }
+                
+                }
+            }
+            
+
 
 
         }
