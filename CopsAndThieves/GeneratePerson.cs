@@ -161,6 +161,29 @@ namespace CopsAndThieves
             //Creating something to return
             Citizen person = new Citizen(fname,sName);
 
+            //Create a base police with name
+
+            //In their inventory becomes a new empty list
+            person.Inventory = new List<string>();
+            //pol.SpawnRandomPosition();
+
+            //Until there's 3 items in their inventory
+            while (person.Inventory.Count < 3)
+            {
+
+
+                //Dummy item class for testing
+                string exampleItem = new DummyItem().PossibleName;
+
+                //If we don't already have this item
+                if (!person.Inventory.Contains(exampleItem))
+                {
+                    //Add that item
+                    person.Inventory.Add(exampleItem);
+                }
+
+            }
+
             person.FirstName = fname;
             person.SurName = sName;
             person.Sprite = sprite;

@@ -10,8 +10,12 @@ namespace CopsAndThieves
 {
     internal class CitySimulation
     {
-        public static int width = 20;
-        public static int height = 20;
+        public static int width = 12;
+        public static int height = 12;
+
+        static int prisonHeight = 6;
+        public static int prisonWidth = 6;
+
 
         static int maxAmountOfCivllians = 15;
 
@@ -24,16 +28,22 @@ namespace CopsAndThieves
 
         static NewsFeed feed = new NewsFeed(height + 5, Console.WindowWidth);
 
+        static DateTime inGameDate = DateTime.Now;
+
         public static void Run()
         {
             //Create some people
             CreatePeople();
+            inGameDate.AddHours(1);
 
             //No visible cursor
             Console.CursorVisible = false;
 
             //Draw city with some dimensions
-            DrawCity(width, height);
+            DrawCity();
+            Thread.Sleep(1000);
+            Console.SetCursorPosition(0, height+2);
+            DrawPrison();
           
             //Constantly draw people as they do "logic"/stuff
             while (true) 
@@ -60,7 +70,7 @@ namespace CopsAndThieves
             }
 
             //Every 3 people spawns a cop at the start
-            for (int i = 0; i <= maxAmountOfCivllians / 3; i++)
+            for (int i = 0; i <= 5; i++)
             {
                 thePolice.Add(GeneratePerson.GenerateRandomPolice());
                 thePolice.ElementAt(i).SpawnRandomPosition(width, height);
@@ -71,7 +81,7 @@ namespace CopsAndThieves
             }
 
             //Every 4 people create a theif
-            for (int i = 0; i <= maxAmountOfCivllians / 4; i++)
+            for (int i = 0; i <= 5; i++)
             {
                 theives.Add(GeneratePerson.GenerateRandomTheif());
                 theives.ElementAt(i).SpawnRandomPosition(width, height);
@@ -81,38 +91,73 @@ namespace CopsAndThieves
 
         }
 
-        static void DrawCity(int dimensionX, int dimensionY)
+        static void DrawCity()
         {
-            Console.Clear();
+          //  Console.Clear();
             string wall = "🧱";
             string empty = "⬜";
 
+            // Top
+            for (int x = 0; x <= width + 1; x++)
+            {
+                Console.Write(wall);
+            }
+            Console.WriteLine();
 
-                // Top
-                for (int x = 0; x <= width + 1; x++)
+            // Middle part with walls and empty spaces
+            for (int y = 0; y < height; y++)
+            {
+                Console.Write(wall);
+                for (int x = 0; x < width; x++)
                 {
-                    Console.Write(wall);
-                }
-                Console.WriteLine();
-
-                // Middle part with walls and empty spaces
-                for (int y = 0; y < height; y++)
-                {
-                    Console.Write(wall);
-                    for (int x = 0; x < width; x++)
-                    {
-                            Console.Write(empty);
-                    }
-
-                    Console.WriteLine(wall);
+                        Console.Write(empty);
                 }
 
-                // Bottom
-                for (int x = 0; x <= width + 1; x++) 
+                Console.WriteLine(wall);
+            }
+
+            // Bottom
+            for (int x = 0; x <= width + 1; x++) 
+            {
+                Console.Write(wall); 
+            }
+            Console.WriteLine("\nESTONIA\n");
+
+        }
+
+        static void DrawPrison()
+        {
+          //  Console.Clear();
+            string wall = "🧱";
+            string empty = "⬜";
+
+            //Get Top LEft X Value
+            int top = Console.CursorTop +1;
+            for (int x = 0; x <= prisonHeight + 1; x++)
+            {
+                Console.Write(wall);
+            }
+            Console.WriteLine();
+
+            // Middle part with walls and empty spaces
+            for (int y = 0; y < prisonWidth; y++)
+            {
+                Console.Write(wall);
+                for (int x = 0; x < prisonHeight; x++)
                 {
-                    Console.Write(wall); 
+                    Console.Write(empty);
                 }
-                Console.WriteLine();
+
+                Console.WriteLine(wall);
+            }
+
+            // Bottom
+            for (int x = 0; x <= prisonWidth + 1; x++)
+            {
+                Console.Write(wall);
+            }
+            //Get bottom right X Value
+            Console.WriteLine();
 
         }
         static void DrawInhabitants()
@@ -147,8 +192,23 @@ namespace CopsAndThieves
             ///
            
 
-            //Citizen greet eachother 
-            //In all citizens
+            //In all of the plice
+            //Check if a theif has the same position
+            foreach(Police cop in thePolice)
+            {
+                foreach(Theif theif in theives)
+                {
+                    if(cop.PosX == theif.PosX && cop.PosY == theif.PosY)
+                    {
+                        feed.AddMsg($"{cop.Sprite} {cop.Arrest()}");
+                        cop.Arrest(theif);
+                        theif.SetReleaseDate(inGameDate);
+                       // Console.WriteLine($"Theif free on {theif.RelaseDate}");
+                    }
+                }
+            }
+
+
             foreach (Citizen ciz in citizens)
             {
                 //Nested loop to check other citizens with X citizen we have
@@ -163,8 +223,9 @@ namespace CopsAndThieves
 
                             //Do the greet
                             string msg = ciz.Greet(hitPerson.FirstName, ciz.PosX, ciz.PosY);
-                            feed.AddMsg(msg);
-                            Thread.Sleep(1000);
+                            //tjuv.Sno(annanPErson)
+                            //feed.AddMsg(msg);
+                            //Thread.Sleep(1000);
                           
                           //  Console.Beep();
                           //Pause
@@ -193,7 +254,48 @@ namespace CopsAndThieves
                 
                 }
             }
+
+            foreach (Theif prisonedTheif in theives)
+            {
+                if (prisonedTheif.inPrison == true)
+                {
+                    DateTime checkIfFreeDate = prisonedTheif.GetReleaseDate();
+                    if (checkIfFreeDate < inGameDate)
+                    {
+                        prisonedTheif.inPrison = false;
+                        feed.AddMsg($"{prisonedTheif.Sprite} {prisonedTheif.FirstName} is free!");
+                       /// Console.WriteLine($"{prisonedTheif.FirstName} is free");
+                        break;
+
+                    }
+
+
+                    Console.SetCursorPosition(prisonedTheif.PosX * 2, prisonedTheif.PosY + 1);
+                    //Write emoji
+                    Console.Write("⬜");
+
+                    // Width of prison, heihght, 
+                    prisonedTheif.Move(14, 15, height +2);
+
+                    // Draw at new position
+                    Console.SetCursorPosition(prisonedTheif.PosX * 2, prisonedTheif.PosY + 1);
+                    Console.Write(prisonedTheif.Sprite);
+                }
             
+            }
+
+            foreach(Theif thivevingTheif in theives) 
+            {
+                foreach(Citizen robTarget in citizens)
+                {
+                    //Check if position is the same
+
+                    //Steal something
+                }
+            
+            }
+            //Console.WriteLine(inGameDate);
+            inGameDate = inGameDate.AddHours(1);
 
 
 

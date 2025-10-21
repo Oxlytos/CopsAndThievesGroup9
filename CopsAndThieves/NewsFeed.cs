@@ -53,7 +53,7 @@ namespace CopsAndThieves
             int adjustedHeight = maxMessages + 1;
 
             //Height is the smallest at height + 2, depening on the buffer height
-            height = Math.Min(height + 2, Console.BufferHeight - adjustedHeight);
+            height = Math.Min(height + 6+2, Console.BufferHeight - adjustedHeight);
 
             Console.SetCursorPosition(0, height);
             Console.Write(new string(' ', width));  

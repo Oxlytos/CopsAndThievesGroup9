@@ -14,7 +14,10 @@ namespace CopsAndThieves
         public List<string> Inventory { get; set; }
         public string Sprite { get; set; } = "⬜";
 
-        static Random rand = new Random();
+        protected static Random rand = new Random();
+
+        protected static int mapX; 
+        internal static int mapY;
 
         //Position variable
         public int PosX, PosY;
@@ -78,7 +81,7 @@ namespace CopsAndThieves
         }
 
        
-        public void Move(int maxX, int maxY)
+        public virtual void Move(int maxX, int maxY)
         {
             //Before we change position, store old position
             OldPosX = PosX;
@@ -151,14 +154,28 @@ namespace CopsAndThieves
         }
 
         //Arrest a criminal
-        void Arrest()
+        public string Arrest()
         {
+            return $"You're going into the slammer!";
+        }
+        public void Arrest(Theif arrestTarget)
+        {
+            //Console.WriteLine($"{this.Sprite}💬: You're going into the slammer!");
+            
+            arrestTarget.inPrison = true;
+            arrestTarget.HoursInPrison = 5;
+            //Console.WriteLine($"In prison?: {arrestTarget.inPrison}");
 
         }
     }
 
     public class Theif : Person
     {
+        public bool inPrison = false;
+
+        public int HoursInPrison {  get; set; }
+
+        public DateTime RelaseDate { get; set; }
 
         public Theif(string fName, string sName)
         {
@@ -167,9 +184,82 @@ namespace CopsAndThieves
             Sprite = "🦹";
         }
 
-        //Steal from a citizen
-        void Steal()
+        public DateTime SetReleaseDate(DateTime orgDate)
         {
+            RelaseDate = orgDate.AddHours(HoursInPrison);
+            return RelaseDate;
+        }
+
+        public DateTime GetReleaseDate()
+        {
+            return RelaseDate;
+        }
+        //Steal from a citizen
+        public void Steal(Citizen cit)
+        {
+            //Sno Från den andras lista
+            //Sno(cit.Inventory[RandomNumber]);
+        }
+
+        public void Move(int prisonMaxX, int prisonMaxY, int prisonPosY)
+        {
+
+            if (inPrison)
+            {
+
+              //  Console.WriteLine("I should be in prison...");
+                PrisonMove(prisonMaxX, prisonMaxY, prisonPosY);
+            }
+            else
+            {
+                base.Move(mapX, mapY);
+            }
+
+        }
+
+        void PrisonMove(int maxX, int maxY, int startYPos)
+        {
+           //Console.WriteLine("What a shitty prison");
+            //Before we change position, store old position
+            this.PosX = rand.Next(2,6);
+            this.PosY = maxY;
+            OldPosX = PosX;
+            OldPosY = PosY;
+
+            int x = rand.Next(-1, 2);
+            int y = rand.Next(-1, 2);
+
+            //Change delta
+            PosX += x;
+            PosY += y;
+
+
+            //Check if crossing limits
+            if (PosX < 1)
+            {
+                //To the right side
+                PosX = maxX - 2;
+            }
+
+            else if (PosX >= maxX)
+            {
+
+                //Left
+                PosX = 1;
+            }
+
+            // Vertical wrapping
+            if (PosY < maxY)
+            {
+                //Bottom
+                PosY = maxY+2;
+            }
+
+            else if (PosY >= maxY*2)
+            {
+                //Top
+                PosY = 1;
+            }
 
         }
     }
