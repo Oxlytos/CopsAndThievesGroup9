@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Unicode;
 using System.Threading.Tasks;
@@ -289,6 +290,15 @@ namespace CopsAndThieves
                 foreach(Citizen robTarget in citizens)
                 {
                     //Check if position is the same
+                    if(thivevingTheif.PosX == robTarget.PosX && thivevingTheif.PosY == robTarget.PosY && !thivevingTheif.inPrison)
+                    {
+                        if (robTarget.Inventory.Count > 0)
+                        {
+                            thivevingTheif.Steal(robTarget);
+                            Console.WriteLine($"{thivevingTheif.Sprite} {thivevingTheif.FirstName} has stolen from {robTarget.FirstName}");
+                        }    
+                        //Console.WriteLine($"{thivevingTheif.FirstName} has stolen from {robTarget.FirstName}!");
+                    }
 
                     //Steal something
                 }

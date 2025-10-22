@@ -197,6 +197,16 @@ namespace CopsAndThieves
         //Steal from a citizen
         public void Steal(Citizen cit)
         {
+            int RandomIndex = rand.Next(0, cit.Inventory.Count);
+            string stolenItem;
+            stolenItem = cit.Inventory[RandomIndex];
+            this.Inventory = new List<string>();
+
+            this.Inventory.Add(stolenItem);
+            cit.Inventory.RemoveAt(RandomIndex);
+            Console.WriteLine($"{this.Sprite} {this.FirstName} has stolen {stolenItem} from {cit.FirstName}");
+
+            
             //Sno Från den andras lista
             //Sno(cit.Inventory[RandomNumber]);
         }
