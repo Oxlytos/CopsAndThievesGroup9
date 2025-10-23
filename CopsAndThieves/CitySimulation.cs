@@ -236,6 +236,8 @@ namespace CopsAndThieves
             
 
         }
+
+
         static void HandleInteractions()
         {
             var positionMapping = HandleCollision();
@@ -254,7 +256,7 @@ namespace CopsAndThieves
                     var cops = peopleHere.OfType<Police>().ToList();
 
                     //All them theives
-                    var thieves = peopleHere.OfType<Theif>().ToList();
+                    var thievesos = peopleHere.OfType<Theif>().ToList();
 
                     //All them ordinaries
                     var citizens = peopleHere.OfType<Citizen>().ToList();
@@ -263,7 +265,7 @@ namespace CopsAndThieves
                     foreach (var coppo in cops)
                     {
                         //This thief on this spot has to be eligle to be arrested => not in prison
-                        var possibleTheifToArrest = theives.FirstOrDefault(t => !t.inPrison);
+                        var possibleTheifToArrest = thievesos.FirstOrDefault(t => !t.inPrison);
 
                         //If a theif on our coordinate exists and they're not in prison
                         if (possibleTheifToArrest != null)
@@ -277,6 +279,16 @@ namespace CopsAndThieves
 
                             //Makes sure that a cop can't re-arrest them every frame
                             possibleTheifToArrest.inPrison = true;
+                        }
+                    }
+
+                    foreach(var theifo in thievesos)
+                    {
+                        var robTarget = citizens.FirstOrDefault(c=>c.Inventory.Count != 0);
+
+                        if(robTarget != null)
+                        {
+                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + theifo.Steal(robTarget));
                         }
                     }
 

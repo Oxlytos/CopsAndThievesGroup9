@@ -159,27 +159,42 @@ namespace CopsAndThieves
         //Arrest a criminal
         public string Arrest(Theif arrestTarget)
         {
-            arrestTarget.inPrison = true;
-            arrestTarget.HoursInPrison = 5;
-            Confiscate(arrestTarget);
-            return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
+            if (arrestTarget.Inventory.Count > 0) 
+            {
+                arrestTarget.inPrison = true;
+                arrestTarget.HoursInPrison = 5;
+                return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
+            }
+            else
+            {
+                return null;
+            }
+           
         }
 
         public string Confiscate(Theif arrestedTheif)
         {
-            if (arrestedTheif.Inventory.Count > 0) 
-            { 
+            if(arrestedTheif.Inventory.Count > 0)
+            {
+                int amountOfItems = arrestedTheif.Inventory.Count();
+
+                int time = 10 * arrestedTheif.Inventory.Count();
                 for (int i = 0; i < arrestedTheif.Inventory.Count; i++)
                 {
                     ConfiscatedItems.Add(arrestedTheif.Inventory[i]);
                 }
+
+
+                //  Console.WriteLine("Counted items in total?: " + amountOfItems);
                 arrestedTheif.Inventory.Clear();
-                return $"{this.Sprite} {this.FirstName} has confscated several items from {arrestedTheif.Sprite} {arrestedTheif.FirstName}";
+                return $"{this.Sprite} {this.FirstName} {ConfiscatedItems.Count()} has confscated {amountOfItems} items from {arrestedTheif.Sprite} {arrestedTheif.FirstName}";
             }
             else
             {
-                return "";
+                return null;
             }
+           
+
 
            
            
@@ -212,11 +227,22 @@ namespace CopsAndThieves
             return RelaseDate;
         }
         //Steal from a citizen
-        public void Steal(Citizen cit)
+        public string Steal(Citizen cit)
         {
-            
+
+            int RandomIndex = rand.Next(0, cit.Inventory.Count);
+            string stolenItem;
+            stolenItem = cit.Inventory[RandomIndex];
+           // this.Inventory = new List<string>();
+
+            this.Inventory.Add(stolenItem);
+            cit.Inventory.RemoveAt(RandomIndex);
+            return $"{this.Sprite} {this.FirstName} has stolen {stolenItem} from {cit.FirstName}";
+
+
             //Sno Från den andras lista
             //Sno(cit.Inventory[RandomNumber]);
+
         }
 
         public void Move(int prisonMaxX, int prisonMaxY, int prisonPosY)
