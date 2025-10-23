@@ -35,10 +35,10 @@ namespace CopsAndThieves
         }
 
         //Greet another person
-        public virtual string Greet(string otherPersonName, int x, int y)
+        public virtual string Greet(Person other, int x, int y)
         {
             string randomGreet = RandomGreet();
-            string theGreet = $"{this.Sprite}💬 {this.FirstName} {this.SurName} greets {otherPersonName} at x:{x} y:{y}: \"{randomGreet}\"";
+            string theGreet = $"{this.Sprite}💬 {this.FirstName} {this.SurName} greets {other.Sprite} {other.FirstName} at x:{x} y:{y}: \"{randomGreet}\"";
             return theGreet;
         }
 
@@ -92,8 +92,8 @@ namespace CopsAndThieves
             int y = rand.Next(-1, 2);
 
             //Change delta
-            PosX += x;
-            PosY += y;
+             PosX += x;
+             PosY += y;
             //Console.WriteLine($"Trying to move with x: {x} and y: {y}");
             //Limits class that checks if said person can walk there, don't cross city limits
 
@@ -102,10 +102,10 @@ namespace CopsAndThieves
             if (PosX < 1)
             {
                 //To the right side
-                PosX = maxX - 2;
+                PosX = maxX - 1;
             }
 
-            else if (PosX >= maxX)
+            else if (PosX >= maxX+1)
             {
 
                 //Left
@@ -116,10 +116,10 @@ namespace CopsAndThieves
             if (PosY < 1)
             {
                 //Bottom
-                PosY = maxY - 2;
+                PosY = maxY;
             }
 
-            else if (PosY >= maxY)
+            else if (PosY >= maxY+1)
             {
                 //Top
                 PosY = 1;
@@ -140,7 +140,7 @@ namespace CopsAndThieves
         }
 
         //Standard police greets citizen
-        public override string Greet(string otherPersonName, int x, int y)
+        public override string Greet(Person otherPersonName, int x, int y)
         {
             string greet = $"\nOfficer {this.FirstName} {this.SurName} greets a {otherPersonName}, a citizen of the city";
             return greet;
@@ -154,19 +154,14 @@ namespace CopsAndThieves
         }
 
         //Arrest a criminal
-        public string Arrest()
+        public string Arrest(Theif arrestTarget)
         {
-            return $"You're going into the slammer!";
-        }
-        public void Arrest(Theif arrestTarget)
-        {
-            //Console.WriteLine($"{this.Sprite}💬: You're going into the slammer!");
-            
             arrestTarget.inPrison = true;
             arrestTarget.HoursInPrison = 5;
-            //Console.WriteLine($"In prison?: {arrestTarget.inPrison}");
-
+            return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
         }
+
+      
     }
 
     public class Theif : Person

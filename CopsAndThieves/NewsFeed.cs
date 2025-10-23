@@ -9,22 +9,17 @@ namespace CopsAndThieves
     public class NewsFeed
     {
         //Dimensions
-        private int height;
-        private int width;
-
-        //All messages
-        private List<string> messages;
-
+        private int startY;
         //Handles amount we render and showcase
         private int maxMessages;
+        //All messages
+        private List<string> messages = new List<string>();
 
         //Constructor for newsFeed
-        public NewsFeed(int startPosY, int widthX, int maxMsg = 5)
+        public NewsFeed(int startPosY, int maxMsg = 15)
         {
-            height = startPosY;
-            width = widthX;
+            startY = startPosY;
             this.maxMessages = maxMsg;
-            messages = new List<string>();
         }
 
         //When creating a new message
@@ -41,39 +36,33 @@ namespace CopsAndThieves
             }
 
             //Draw the board with all the messages
-            DrawMessageBoard();
+            //DrawMessageBoard();
         }
 
         public void DrawMessageBoard() 
         {
-            //Loop through all messages
-            // Draw title
+            int consoleWidth = Console.WindowWidth;
+            int y = startY;
 
-            //Adjusting for window height
-            int adjustedHeight = maxMessages + 1;
-
-            //Height is the smallest at height + 2, depening on the buffer height
-            height = Math.Min(height + 6+2, Console.BufferHeight - adjustedHeight);
-
-            Console.SetCursorPosition(0, height);
-            Console.Write(new string(' ', width));  
-            Console.SetCursorPosition(0, height);
-
-            Console.Write("🎺🎺🎺🎺NEWS FEED🎺🎺🎺🎺");
-
-            for (int i = 0; i < messages.Count; i++) 
+            for (int i = 0; i < messages.Count + 2; i++) 
             {
-                //Clear and spacing
-                Console.SetCursorPosition(0, height + 1 + i);
-                Console.Write(new string(' ', width));
-                
-                //Prepare row, then write
-                Console.SetCursorPosition(0, height +1 + i);
-                Console.Write(messages[i]);
-
+                Console.SetCursorPosition(0, y + i);
+                Console.Write(new string(' ', consoleWidth));
             }
-            Thread.Sleep(500);
-        
+
+            Console.SetCursorPosition(0, y);
+            string titleFeed = "NEWS FEED!";
+
+            int feedCenterPos = Math.Max((consoleWidth-titleFeed.Length) / 2,0);
+            Console.SetCursorPosition(feedCenterPos, y);
+            Console.Write(titleFeed);
+
+            for(int i=0; i < messages.Count; i++)
+            {
+                Console.SetCursorPosition(0, y + 1+ i);
+                Console.Write(messages[i].PadRight(consoleWidth));
+            }
+          
         }
     }
 }
