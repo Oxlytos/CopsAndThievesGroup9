@@ -31,6 +31,11 @@ namespace CopsAndThieves
         public bool PasswordProtected { get; set; }
     }
 
+    class Iphone : Phone
+    {
+
+    }
+
     class ServiceEquipment : Item
     {
         //Radio, Baton, Gun

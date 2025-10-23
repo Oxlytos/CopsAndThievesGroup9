@@ -11,7 +11,8 @@ namespace CopsAndThieves
 
         public string FirstName { get; set; }
         public string SurName { get; set; }
-        public List<string> Inventory { get; set; }
+
+        public List<string> Inventory = new List<string>();
         public string Sprite { get; set; } = "⬜";
 
         protected static Random rand = new Random();
@@ -131,6 +132,8 @@ namespace CopsAndThieves
 
     public class Police : Person
     {
+        public List<string> ConfiscatedItems = new List<string>();
+
         public Police(string fName, string sName)
         {
 
@@ -158,10 +161,29 @@ namespace CopsAndThieves
         {
             arrestTarget.inPrison = true;
             arrestTarget.HoursInPrison = 5;
+            Confiscate(arrestTarget);
             return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
         }
 
-      
+        public string Confiscate(Theif arrestedTheif)
+        {
+            if (arrestedTheif.Inventory.Count > 0) 
+            { 
+                for (int i = 0; i < arrestedTheif.Inventory.Count; i++)
+                {
+                    ConfiscatedItems.Add(arrestedTheif.Inventory[i]);
+                }
+                arrestedTheif.Inventory.Clear();
+                return $"{this.Sprite} {this.FirstName} has confscated several items from {arrestedTheif.Sprite} {arrestedTheif.FirstName}";
+            }
+            else
+            {
+                return "";
+            }
+
+           
+           
+        }
     }
 
     public class Theif : Person
@@ -192,6 +214,7 @@ namespace CopsAndThieves
         //Steal from a citizen
         public void Steal(Citizen cit)
         {
+            
             //Sno Från den andras lista
             //Sno(cit.Inventory[RandomNumber]);
         }
@@ -265,6 +288,7 @@ namespace CopsAndThieves
         {
             FirstName = fName;
             SurName = sName;
+            Inventory.Add("Potato");
         }
 
         //Citizens greet either another citizen or a cop

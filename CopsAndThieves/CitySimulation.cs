@@ -88,7 +88,7 @@ namespace CopsAndThieves
 
         static void CreatePeople()
         {
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 20; i++)
             {
                 //Create citizen, add to list
                 citizens.Add(GeneratePerson.GenerateRandomCititzen());
@@ -101,7 +101,7 @@ namespace CopsAndThieves
             }
 
             //Every 3 people spawns a cop at the start
-            /*
+            
             for (int i = 0; i <= 5; i++)
             {
                 thePolice.Add(GeneratePerson.GenerateRandomPolice());
@@ -119,7 +119,7 @@ namespace CopsAndThieves
                 theives.ElementAt(i).SpawnRandomPosition(width, height);
 
                 allPeopple.Add(theives.ElementAt(i));
-            }*/
+            }
 
         }
 
@@ -153,9 +153,9 @@ namespace CopsAndThieves
                 Console.Write(wall);
             }
             Console.WriteLine("\nESTONIA\n");
-
+            Console.Write("Fuck");
         }
-
+        
         static void DrawPrison()
         {
             //  Console.Clear();
@@ -270,6 +270,7 @@ namespace CopsAndThieves
                         {
                             //Message and arrest them
                             feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + coppo.Arrest(possibleTheifToArrest));
+                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + coppo.Confiscate(possibleTheifToArrest));
 
                             //Prison time
                             possibleTheifToArrest.SetReleaseDate(inGameDate);
@@ -286,7 +287,7 @@ namespace CopsAndThieves
                         for (int j = i + 1; j < citizens.Count; j++)
                         {
                             //Message and greet
-                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + citizens[i].Greet(citizens[j], citizens[i].PosX, citizens[i].PosY));
+                           // feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + citizens[i].Greet(citizens[j], citizens[i].PosX, citizens[i].PosY));
                         }
                     }
 
@@ -295,7 +296,7 @@ namespace CopsAndThieves
                     {
                         for (int j = i + 1; j < cops.Count; j++)
                         {
-                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + cops[i].Greet(cops[j], cops[i].PosX, cops[i].PosY));
+                            //feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + cops[i].Greet(cops[j], cops[i].PosX, cops[i].PosY));
                         }
                     }
 
@@ -314,7 +315,7 @@ namespace CopsAndThieves
                 {
                     //release em
                     prisonedTheif.inPrison = false;
-                    feed.AddMsg($" {inGameDate.ToString("yyyy-MM-dd-HH")} {prisonedTheif.Sprite} {prisonedTheif.FirstName} is free!");
+                   // feed.AddMsg($" {inGameDate.ToString("yyyy-MM-dd-HH")} {prisonedTheif.Sprite} {prisonedTheif.FirstName} is free!");
                     //Continue the rest of the method for the rest of the prisoners
                     continue;
                     /// Console.WriteLine($"{prisonedTheif.FirstName} is free");
