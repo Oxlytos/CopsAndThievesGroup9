@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Unicode;
@@ -10,11 +11,11 @@ namespace CopsAndThieves
 {
     internal class CitySimulation
     {
-        public static int width = 12;
+        public static int width = 60;
         public static int height = 12;
 
-        static int prisonHeight = 6;
-        public static int prisonWidth = 6;
+        static int prisonHeight = 10;
+        public static int prisonWidth = 10;
 
 
         static int maxAmountOfCivllians = 15;
@@ -36,13 +37,14 @@ namespace CopsAndThieves
             //Create some people
             CreatePeople();
             inGameDate.AddHours(1);
+            feed.SimulationDate = inGameDate;
 
             //No visible cursor
             Console.CursorVisible = false;
 
             //Draw city with some dimensions
             DrawCity();
-            Thread.Sleep(1000);
+            Thread.Sleep(1500);
             Console.SetCursorPosition(0, height + 2);
             DrawPrison();
 
@@ -51,13 +53,14 @@ namespace CopsAndThieves
             {
                 if ((Console.WindowWidth < 70 || Console.WindowHeight < 20))
                 {
-                    feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + "CONSOLE WINDOW MAY BE TO SMALL FOR SIMULATION TO RUN SMOOTHLY! PROCCEED AT YOUR OWN RISK!");
+                    feed.AddImportant(inGameDate.ToString("dd-HH") + "CONSOLE WINDOW MAY BE TO SMALL FOR SIMULATION TO RUN SMOOTHLY! PROCCEED AT YOUR OWN RISK!");
                     Thread.Sleep(1000);
                 }
                 try
                 {
                     //Methods broken up for claritys sake
                     //Move and handle interactions
+
                     UpdateMovement();
 
                     //Draw people after they've moved
@@ -66,7 +69,6 @@ namespace CopsAndThieves
                     //Interactions on the same space
                     HandleInteractions();
 
-                    //Prison people last
                     HandlePrisoners();
 
                     //News
@@ -74,6 +76,7 @@ namespace CopsAndThieves
 
                     //Progress time
                     inGameDate = inGameDate.AddHours(1);
+                    feed.SimulationDate = inGameDate;
                 }
 
                 catch (ArgumentOutOfRangeException)
@@ -81,17 +84,18 @@ namespace CopsAndThieves
                     //Windows might be too small to render stuff
                 }
                 //Pause each turn
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
 
             }
         }
 
         static void CreatePeople()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 40; i++)
             {
                 //Create citizen, add to list
                 citizens.Add(GeneratePerson.GenerateRandomCititzen());
+                
 
                 //Creates a random spawn point
                 citizens.ElementAt(i).SpawnRandomPosition(width, height);
@@ -99,10 +103,11 @@ namespace CopsAndThieves
                 //Add citizen(i) till main list
                 allPeopple.Add(citizens.ElementAt(i));
             }
+            feed.CitizensAmount = citizens.Count;
 
             //Every 3 people spawns a cop at the start
             
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i < 15; i++)
             {
                 thePolice.Add(GeneratePerson.GenerateRandomPolice());
                 thePolice.ElementAt(i).SpawnRandomPosition(width, height);
@@ -111,16 +116,16 @@ namespace CopsAndThieves
 
 
             }
-
+            feed.PoliceAmount = thePolice.Count;
             //Every 4 people create a theif
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 theives.Add(GeneratePerson.GenerateRandomTheif());
                 theives.ElementAt(i).SpawnRandomPosition(width, height);
 
                 allPeopple.Add(theives.ElementAt(i));
             }
-
+            feed.ThiefAmount = theives.Count;
         }
 
         static void DrawCity()
@@ -152,8 +157,6 @@ namespace CopsAndThieves
             {
                 Console.Write(wall);
             }
-            Console.WriteLine("\nESTONIA\n");
-            Console.Write("Fuck");
         }
         
         static void DrawPrison()
@@ -196,6 +199,18 @@ namespace CopsAndThieves
         {
             foreach (var pop in allPeopple)
             {
+                //If said person is a theif
+                if(pop is Theif thief)
+                {
+                    //And they're in prison
+                    if (thief.inPrison)
+                    {
+                        //Continue
+                        //Continue as in skip the rest of the code for this pop, do the rest of the foreach people
+                        feed.AddGreet($"{thief.Sprite}{thief.FirstName} sulks in the prison");
+                        continue;
+                    }
+                }
                 // Erase old position
                 Console.SetCursorPosition(pop.PosX * 2, pop.PosY + 1);
                 //Write emoji
@@ -231,7 +246,7 @@ namespace CopsAndThieves
                 //This point already has p people here, add this person to it
                 hitMapping[pos].Add(person);
             }
-
+            //Use this mapping elswhere
             return hitMapping;
             
 
@@ -249,6 +264,7 @@ namespace CopsAndThieves
                 {
                     //More than 2 people on a space creates a emoji for highlight
                     Console.SetCursorPosition(pos.Item1 * 2, pos.Item2 + 1);
+
                     Console.Write("💥");
 
 
@@ -265,30 +281,47 @@ namespace CopsAndThieves
                     foreach (var coppo in cops)
                     {
                         //This thief on this spot has to be eligle to be arrested => not in prison
-                        var possibleTheifToArrest = thievesos.FirstOrDefault(t => !t.inPrison);
+                        var possibleTheifToArrest = thievesos.FirstOrDefault(t => !t.inPrison && t.Inventory.Count() > 0);
 
                         //If a theif on our coordinate exists and they're not in prison
                         if (possibleTheifToArrest != null)
                         {
                             //Message and arrest them
-                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + coppo.Arrest(possibleTheifToArrest));
-                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + coppo.Confiscate(possibleTheifToArrest));
+                            if (possibleTheifToArrest.Inventory.Count() > 0) 
+                            {
+                                feed.ObjectsConfiscated += possibleTheifToArrest.Inventory.Count();
+                                feed.ObjectsStolen -= possibleTheifToArrest.Inventory.Count();
 
-                            //Prison time
-                            possibleTheifToArrest.SetReleaseDate(inGameDate);
+                                feed.AddImportant(inGameDate.ToString("dd-HH") + coppo.Arrest(possibleTheifToArrest));
 
-                            //Makes sure that a cop can't re-arrest them every frame
-                            possibleTheifToArrest.inPrison = true;
+                                feed.AddImportant(inGameDate.ToString("dd-HH") + coppo.Confiscate(possibleTheifToArrest));
+
+                                feed.ThievesInPrison++;
+                                //Prison time
+                                possibleTheifToArrest.SetReleaseDate(inGameDate);
+
+                                //Makes sure that a cop can't re-arrest them every frame
+                                possibleTheifToArrest.inPrison = true;
+                            }
+                          
+
                         }
                     }
-
+                    //Theif robs
                     foreach(var theifo in thievesos)
                     {
+                        //If somoones got stuff
                         var robTarget = citizens.FirstOrDefault(c=>c.Inventory.Count != 0);
 
+                        //If they exist with items at all
                         if(robTarget != null)
                         {
-                            feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + theifo.Steal(robTarget));
+                            //Print
+                            feed.AddImportant(inGameDate.ToString("dd-HH") + theifo.Steal(robTarget));
+
+                            //Stats
+                            feed.CitizensRobbed++;
+                            feed.ObjectsStolen++;
                         }
                     }
 
@@ -299,7 +332,7 @@ namespace CopsAndThieves
                         for (int j = i + 1; j < citizens.Count; j++)
                         {
                             //Message and greet
-                           // feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + citizens[i].Greet(citizens[j], citizens[i].PosX, citizens[i].PosY));
+                            feed.AddGreet(inGameDate.ToString("dd-HH") + citizens[i].Greet(citizens[j], citizens[i].PosX, citizens[i].PosY));
                         }
                     }
 
@@ -308,8 +341,16 @@ namespace CopsAndThieves
                     {
                         for (int j = i + 1; j < cops.Count; j++)
                         {
-                            //feed.AddMsg(inGameDate.ToString("yyyy-MM-dd-HH") + cops[i].Greet(cops[j], cops[i].PosX, cops[i].PosY));
+                            feed.AddGreet(inGameDate.ToString("dd-HH") + cops[i].PoliceGreet(cops[j], cops[i].PosX, cops[i].PosY));
                         }
+                        //All citizens on this spot, start on the same index as the cop
+                        for (int j = i ; j < citizens.Count; j++)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Magenta;
+                            feed.AddGreet(inGameDate.ToString("dd-HH") + cops[i].Greet(citizens[j], cops[i].PosX, cops[i].PosY));
+                            Console.BackgroundColor = ConsoleColor.Magenta;
+                        }
+                        Console.BackgroundColor = ConsoleColor.Black;
                     }
 
 
@@ -325,9 +366,10 @@ namespace CopsAndThieves
                 //If they should get realeased
                 if (prisonedTheif.GetReleaseDate() < inGameDate)
                 {
+                    feed.ThievesInPrison--;
                     //release em
                     prisonedTheif.inPrison = false;
-                   // feed.AddMsg($" {inGameDate.ToString("yyyy-MM-dd-HH")} {prisonedTheif.Sprite} {prisonedTheif.FirstName} is free!");
+                    feed.AddImportant($"{inGameDate.ToString("dd-HH")}{prisonedTheif.Sprite} {prisonedTheif.FirstName} is free!");
                     //Continue the rest of the method for the rest of the prisoners
                     continue;
                     /// Console.WriteLine($"{prisonedTheif.FirstName} is free");
@@ -336,13 +378,27 @@ namespace CopsAndThieves
                 //If x theif is not to be released
                 else
                 {
+                    feed.ThievesInPrison = theives.Where(t=>t.inPrison).Count();
                     //Draw em
                     Console.SetCursorPosition(prisonedTheif.PosX * 2, prisonedTheif.PosY + 1);
                     //Write emoji
                     Console.Write("⬜");
 
-                    // Width of prison, heihght, 
-                    prisonedTheif.Move(14, 15, height + 2);
+                    //Left wall
+                    int prisonStartX = 1;
+
+                    //Top with offset for wall
+                    int prisonStartY = height + 2;
+
+                    //Right wall
+                    int prisonEndX = prisonStartX + prisonWidth - 1;
+
+                    //Bottom wall
+                    int prisonEndY = prisonStartY + prisonHeight - 1;
+
+
+
+                    prisonedTheif.Move(prisonStartX, prisonEndX, prisonStartY, prisonEndY);
 
                     // Draw at new position
                     Console.SetCursorPosition(prisonedTheif.PosX * 2, prisonedTheif.PosY + 1);

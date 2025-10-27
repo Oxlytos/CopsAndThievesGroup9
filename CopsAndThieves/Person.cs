@@ -46,40 +46,38 @@ namespace CopsAndThieves
         string RandomGreet()
         {
             string[] greets = {
-                "*Spits at their shoes*",
-                "Walking out in that? 👀",
-                "Stop pretending 😈",
-                "Daring outfit today 😬",
-                "Back already? 😤",
-                "Your aura stinks. 🤢",
-                "Blink weird. 🤨",
-                "Hi. Don’t care. 😐",
-                "Chaos returns 😏",
-                "Your face spoils things 😳",
-                "Stop thinking out loud 😒",
-                "Look at what the cat dragged in 😑",
-                "Act normal 😒",
-                "*Aura farms*",
-                "Npc detected 👀",
-                "No rizz 🤯",
-                "Stop moving. Or don’t. 👀",
-                "Improvising… tragic. 😏",
-                "Human glitch detected. 😈",
-                "Stop acting normal. 😒",
-                "You exist. Terrible. 😬",
-                "Opinions! Unwanted. 🤨",
-                "Smile… alarming. 😳"
+                    "Hey!",
+                    "Hi!",
+                    "Hello!",
+                    "Yo!",
+                    "Yoo!",
+                    "Sup?",
+                    "Heya!",
+                    "Howdy!",
+                    "Greetings!",
+                    "What’s up?",
+                    "Hiya!",
+                    "Yo yo!",
+                    "Ello!",
+                    "Hey there!",
+                    "Wassup!",
+                    "Salutations!",
+                    "Hola!",
+                    "Ahoy!",
+                    "Yo mate!",
+                    "Good day!"
             };
+
+
 
             //Index in relation to total length of the array
             int greetIndex = rand.Next(greets.Length);
             string greet = greets[greetIndex];
 
             return greet;
-
-
-
         }
+
+        
 
        
         public virtual void Move(int maxX, int maxY)
@@ -143,26 +141,31 @@ namespace CopsAndThieves
         }
 
         //Standard police greets citizen
-        public override string Greet(Person otherPersonName, int x, int y)
+        public override string Greet(Person citizen, int x, int y)
         {
-            string greet = $"\nOfficer {this.FirstName} {this.SurName} greets a {otherPersonName}, a citizen of the city";
+            
+            string randoGreet = RandomGreet();
+            string greet = $"{this.Sprite} Officer {this.FirstName} greets {citizen.Sprite} {citizen.FirstName}: \"{randoGreet}\"";
+            return greet;
+            
+
+        }
+        public string PoliceGreet(Police otherOfficer, int x, int y)
+        {
+            string randoGreet = RandomGreet(otherOfficer);
+            string greet = $"{this.Sprite} Officer {this.FirstName} greets officer {otherOfficer.Sprite} {otherOfficer.FirstName}: \"{randoGreet}\"";
             return greet;
 
         }
 
-        //Greet other police
-        public void GreetPolice(string otherPersonName, int x, int y)
-        {
-            // Console.WriteLine($"\nOfficer {base.SurName} says: Donuts? {otherPersonName}? At pos {x}, {y}");
-        }
 
         //Arrest a criminal
         public string Arrest(Theif arrestTarget)
         {
-            if (arrestTarget.Inventory.Count > 0) 
+            if (arrestTarget.Inventory.Count > 0 && !arrestTarget.inPrison) 
             {
                 arrestTarget.inPrison = true;
-                arrestTarget.HoursInPrison = 5;
+                arrestTarget.HoursInPrison = 10*arrestTarget.Inventory.Count;
                 return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
             }
             else
@@ -193,12 +196,58 @@ namespace CopsAndThieves
             {
                 return null;
             }
+
            
 
 
-           
-           
+
         }
+        static string RandomGreet()
+        {
+            string[] greets = {
+                "Evening, citizen!",
+                "Stay out of trouble!",
+                "All quiet tonight?",
+                "Keep it lawful!",
+                "Patrol says hi!",
+                "Stay safe out there!",
+                "Watch yourself!",
+                "Greetings, citizen!",
+                "Everything under control?",
+                "Stay sharp!"
+            };
+
+            //Index in relation to total length of the array
+            int greetIndex = rand.Next(greets.Length);
+            string greet = greets[greetIndex];
+
+            return greet;
+        }
+        static string RandomGreet(Police otherOfficer)
+        {
+            string[] greets = {
+                "Hey, partner!",
+                "All good?",
+                "Patrol check-in!",
+                "Stay sharp!",
+                "Copy that!",
+                "Looking busy?",
+                "Got your six!",
+                "On it!",
+                "Move out!",
+                "Watch your back!"
+            };
+
+            //Index in relation to total length of the array
+            int greetIndex = rand.Next(greets.Length);
+            string greet = greets[greetIndex];
+
+            return greet;
+        }
+
+
+
+
     }
 
     public class Theif : Person
@@ -208,6 +257,9 @@ namespace CopsAndThieves
         public int HoursInPrison {  get; set; }
 
         public DateTime RelaseDate { get; set; }
+
+
+
 
         public Theif(string fName, string sName)
         {
@@ -245,14 +297,14 @@ namespace CopsAndThieves
 
         }
 
-        public void Move(int prisonMaxX, int prisonMaxY, int prisonPosY)
+        public void Move(int minX, int maxX, int minY, int maxY)
         {
 
             if (inPrison)
             {
 
               //  Console.WriteLine("I should be in prison...");
-                PrisonMove(prisonMaxX, prisonMaxY, prisonPosY);
+                PrisonMove(minX,maxX,minY,maxY);
             }
             else
             {
@@ -261,50 +313,29 @@ namespace CopsAndThieves
 
         }
 
-        void PrisonMove(int maxX, int maxY, int startYPos)
+        void PrisonMove(int minX, int maxX, int minY, int maxY)
         {
-           //Console.WriteLine("What a shitty prison");
+            //Console.WriteLine("What a shitty prison");
             //Before we change position, store old position
-            this.PosX = rand.Next(2,6);
-            this.PosY = maxY;
+            //Check if crossing limits
+
             OldPosX = PosX;
             OldPosY = PosY;
 
             int x = rand.Next(-1, 2);
             int y = rand.Next(-1, 2);
 
-            //Change delta
-            PosX += x;
-            PosY += y;
+            //Move
+            //PosX++;
+            PosY++;
 
+            // Wrap horizontally
+            if (PosX < minX) PosX = maxX;
+            else if (PosX > maxX) PosX = minX;
 
-            //Check if crossing limits
-            if (PosX < 1)
-            {
-                //To the right side
-                PosX = maxX - 2;
-            }
-
-            else if (PosX >= maxX)
-            {
-
-                //Left
-                PosX = 1;
-            }
-
-            // Vertical wrapping
-            if (PosY < maxY)
-            {
-                //Bottom
-                PosY = maxY+2;
-            }
-
-            else if (PosY >= maxY*2)
-            {
-                //Top
-                PosY = 1;
-            }
-
+            // Wrap vertically
+            if (PosY < minY) PosY = maxY;
+            else if (PosY > maxY) PosY = minY;
         }
     }
 

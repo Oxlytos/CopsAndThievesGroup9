@@ -223,7 +223,7 @@ namespace CopsAndThieves
             int randomAmount = random.Next(1,10);
 
             //Their literal name rn is Konstapel Eric for ex, a title field could be used here instead
-            string fname = "Konstapel " + GetFirstName();
+            string fname = GetFirstName();
             string sName = GetSurName();
 
             //Create a base police with name
