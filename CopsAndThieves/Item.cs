@@ -6,39 +6,42 @@ using System.Threading.Tasks;
 
 namespace CopsAndThieves
 {
-    internal class Item
+    public class Item
     {
+        internal static Random random = new Random();
         //Name of the item i.e. Iphone 7, Wallet etc
         public string Name { get; set; }
 
-        //Red, 256gb Storage, Notes totaling 50€ in value, Picture of a family member etc
-        public string Description { get; set; }
-
-        //Some total value of an item (steal something worth alot => More prison time?)
-        public double Value { get; set; }
-
-        //Mark something as stolen
-        public bool Stolen { get; set; }
-
         //Original owner either just name or the Person class as a direct reference
-        public string OriginalOwner { get; set; }
+        public Person OriginalOwner { get; set; }
 
+        public Item(string _name, Person _orgOwner)
+        {
+            Name = _name;
+            OriginalOwner = _orgOwner;
+        }
 
     }
-
-    class Phone : Item
+    class CivilianItem : Item
     {
-        public bool PasswordProtected { get; set; }
+        static string[] itemNames = { "📱Phone", "🔑Keys", "👛Wallet", "⌚Watch" };
+        public CivilianItem(string _name, Person _orgOwner) : base(_name, _orgOwner)
+        {
+            _name = itemNames[random.Next(0, itemNames.Length)];
+            Name = _name;
+            OriginalOwner = _orgOwner;
+        }
     }
 
-    class Iphone : Phone
+    class PoliceItem : Item
     {
-
+        static string[] itemNames = { "🔫Gun", "🦯Baton", "🎖️Badge", "📱Phone" };
+        public PoliceItem(string _name, Person _orgOwner) : base(_name, _orgOwner)
+        {
+            _name = itemNames[random.Next(0, itemNames.Length)];
+            Name = _name;
+            OriginalOwner = _orgOwner;
+        }
     }
 
-    class ServiceEquipment : Item
-    {
-        //Radio, Baton, Gun
-        bool policeOwned = true;
-    }
 }

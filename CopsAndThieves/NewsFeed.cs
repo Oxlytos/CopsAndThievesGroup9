@@ -17,11 +17,14 @@ namespace CopsAndThieves
         public int CitizensRobbed { get; set; } = 0;
         public int ThievesInPrison { get; set; } = 0;
 
-
-        //Dimensions
+        //Height is the city+prison heights + 5
         private int startY;
         //Handles amount we render and showcase
         private int maxMessages;
+        //Message offset
+        private int messageOffsetY = 3;
+
+
         //Just messages
         private List<string> greets = new List<string>();
         //All actions that may be important
@@ -47,9 +50,9 @@ namespace CopsAndThieves
                 greets.RemoveAt(0);
             }
 
-            //Draw the board with all the messages
-            //DrawMessageBoard();
         }
+        
+        //For all the actions
         public void AddImportant(string msg)
         {
             actions.Add(msg);
@@ -62,42 +65,59 @@ namespace CopsAndThieves
             }
         }
 
+        //Draw the message board
         public void DrawMessageBoard() 
         {
-            int consoleWidth = Console.WindowWidth;
-            int halfOfTheScreen = consoleWidth / 2;
-            int y = startY;
 
-            for (int i = 0; i < greets.Count + 3; i++) 
+            //Get the current width (can scale a bit)
+            int consoleWidth = Console.WindowWidth;
+            //Middle of the screen is width/2
+            int halfOfTheScreen = consoleWidth / 2;
+
+            //At the bottom of the screen
+            int y = startY;
+            
+
+            //Clears old messages in a block area
+            for (int i = 0; i < maxMessages; i++) 
             {
                 Console.SetCursorPosition(0, y + i);
                 Console.Write(new string(' ', consoleWidth));
             }
+
+            //Print statistics at the top, first move to the cleared area
             Console.SetCursorPosition(0, y);
-            Console.Write(UpdateCityStatistics().PadRight(consoleWidth * 2));
+            //Then print
+            Console.Write(UpdateCityStatistics());
 
 
             string actionFeed = "ACTIONS FEED!";
             string greetFeed = "GREETS FEED!";
 
-            Console.SetCursorPosition(halfOfTheScreen/4, y+2);
+            Console.SetCursorPosition(0, y+2);
             Console.Write(actionFeed);
-            Console.SetCursorPosition((halfOfTheScreen*2)/2, y+2);
+            Console.SetCursorPosition(halfOfTheScreen, y+2);
             Console.Write(greetFeed);
 
-            int maxRows = Math.Max(actions.Count, greets.Count);
-            for (int f = 0; f < maxRows; f++) {
+            //Loop through all the messages in boths lists
+            for (int f = 0; f < maxMessages; f++) {
 
                 if (f < actions.Count)
                 {
+                    //Yellow text to signal that these may be more important
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.SetCursorPosition(0, y + 3 + f);
+                    //Move cursor to the left, with start Pos from bottom of the jail, with an offset, and with the message count
+                    //Aka move with a scroll based on the Message[f], where newer are at the bottom
+                    Console.SetCursorPosition(0, y + messageOffsetY + f);
                     Console.Write(actions[f]);
                 }
                 if (f < greets.Count)
                 {
+                    //Greets are more common, white color for them
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(halfOfTheScreen, y + 3 + f);
+                    //Move to the middle of the screen and start printing your messages
+                    Console.SetCursorPosition(halfOfTheScreen,y+ messageOffsetY + f);
+                    //Padright with spacing of half the screen (for more PadRight: https://learn.microsoft.com/en-us/dotnet/api/system.string.padright?view=net-9.0)
                     Console.Write(greets[f].PadRight(halfOfTheScreen));
                 }
             }
@@ -108,8 +128,8 @@ namespace CopsAndThieves
         {
 
             return $" {SimulationDate}🧍{CitizensAmount} 👮{PoliceAmount} 🦹{ThiefAmount} | " +
-              $"Robbed: {CitizensRobbed}, Stolen: {ObjectsStolen}, Confiscated: {ObjectsConfiscated} | " +
-              $"In Prison: {ThievesInPrison}/{ThiefAmount} On the loose: {ThiefAmount-ThievesInPrison}";
+              $"🥷 Robbed: {CitizensRobbed}, 💰 Stolen: {ObjectsStolen}, 🫴 Confiscated: {ObjectsConfiscated} | " +
+              $"🏤 In Prison: {ThievesInPrison}/{ThiefAmount} 🦹 On the loose: {ThiefAmount-ThievesInPrison}";
         }
     }
    

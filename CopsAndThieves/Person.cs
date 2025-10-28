@@ -12,7 +12,7 @@ namespace CopsAndThieves
         public string FirstName { get; set; }
         public string SurName { get; set; }
 
-        public List<string> Inventory = new List<string>();
+        public List<Item> Inventory = new List<Item>();
         public string Sprite { get; set; } = "⬜";
 
         protected static Random rand = new Random();
@@ -130,7 +130,7 @@ namespace CopsAndThieves
 
     public class Police : Person
     {
-        public List<string> ConfiscatedItems = new List<string>();
+        public List<Item> ConfiscatedItems = new List<Item>();
 
         public Police(string fName, string sName)
         {
@@ -177,31 +177,28 @@ namespace CopsAndThieves
 
         public string Confiscate(Theif arrestedTheif)
         {
+            //Confiscate if there's stuff
             if(arrestedTheif.Inventory.Count > 0)
             {
+                //Get a total as an int for convencience
                 int amountOfItems = arrestedTheif.Inventory.Count();
 
-                int time = 10 * arrestedTheif.Inventory.Count();
-                for (int i = 0; i < arrestedTheif.Inventory.Count; i++)
-                {
-                    ConfiscatedItems.Add(arrestedTheif.Inventory[i]);
-                }
+                //10 hours * how much was stolen
+                int time = 10 * amountOfItems;
 
+                //Add the vhieves inventory to the police's, the confiscated could grow endless?
+                ConfiscatedItems.AddRange(arrestedTheif.Inventory);
 
-                //  Console.WriteLine("Counted items in total?: " + amountOfItems);
+                // Clear the inventory
                 arrestedTheif.Inventory.Clear();
-                return $"{this.Sprite} {this.FirstName} {ConfiscatedItems.Count()} has confscated {amountOfItems} items from {arrestedTheif.Sprite} {arrestedTheif.FirstName}";
+                return $"{this.Sprite} {this.FirstName} has confscated {amountOfItems} items from {arrestedTheif.Sprite} {arrestedTheif.FirstName}";
             }
             else
             {
                 return null;
             }
-
-           
-
-
-
         }
+        //Police to civilian
         static string RandomGreet()
         {
             string[] greets = {
@@ -223,6 +220,7 @@ namespace CopsAndThieves
 
             return greet;
         }
+        //Police to police
         static string RandomGreet(Police otherOfficer)
         {
             string[] greets = {
@@ -256,10 +254,7 @@ namespace CopsAndThieves
 
         public int HoursInPrison {  get; set; }
 
-        public DateTime RelaseDate { get; set; }
-
-
-
+        DateTime RelaseDate { get; set; }
 
         public Theif(string fName, string sName)
         {
@@ -267,13 +262,13 @@ namespace CopsAndThieves
             SurName = sName;
             Sprite = "🦹";
         }
-
+        //Call this after being arrested and getting put in prison
         public DateTime SetReleaseDate(DateTime orgDate)
         {
             RelaseDate = orgDate.AddHours(HoursInPrison);
             return RelaseDate;
         }
-
+        //Check release date
         public DateTime GetReleaseDate()
         {
             return RelaseDate;
@@ -283,18 +278,13 @@ namespace CopsAndThieves
         {
 
             int RandomIndex = rand.Next(0, cit.Inventory.Count);
-            string stolenItem;
+            Item stolenItem;
             stolenItem = cit.Inventory[RandomIndex];
            // this.Inventory = new List<string>();
 
             this.Inventory.Add(stolenItem);
             cit.Inventory.RemoveAt(RandomIndex);
-            return $"{this.Sprite} {this.FirstName} has stolen {stolenItem} from {cit.FirstName}";
-
-
-            //Sno Från den andras lista
-            //Sno(cit.Inventory[RandomNumber]);
-
+            return $"{this.Sprite} {this.FirstName} has stolen {stolenItem.Name} from {cit.FirstName}";
         }
 
         public void Move(int minX, int maxX, int minY, int maxY)
@@ -315,25 +305,23 @@ namespace CopsAndThieves
 
         void PrisonMove(int minX, int maxX, int minY, int maxY)
         {
-            //Console.WriteLine("What a shitty prison");
             //Before we change position, store old position
-            //Check if crossing limits
-
             OldPosX = PosX;
             OldPosY = PosY;
 
+            //Give some random
             int x = rand.Next(-1, 2);
             int y = rand.Next(-1, 2);
 
-            //Move
-            //PosX++;
-            PosY++;
+            //Move like the standard Move
+            PosX+=x;
+            PosY+=y;
 
-            // Wrap horizontally
+            // Horizontal reach around
             if (PosX < minX) PosX = maxX;
             else if (PosX > maxX) PosX = minX;
 
-            // Wrap vertically
+            //Same but vertical
             if (PosY < minY) PosY = maxY;
             else if (PosY > maxY) PosY = minY;
         }
@@ -345,7 +333,6 @@ namespace CopsAndThieves
         {
             FirstName = fName;
             SurName = sName;
-            Inventory.Add("Potato");
         }
 
         //Citizens greet either another citizen or a cop
