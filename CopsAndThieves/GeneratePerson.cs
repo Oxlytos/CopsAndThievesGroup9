@@ -106,9 +106,7 @@ namespace CopsAndThieves
             //Until there's 3 items in their inventory
             while (person.Inventory.Count < 4)
             {
-
-
-                //Dummy item class for testing
+                //Get a lil civilian item
                 Item civItem = new CivilianItem("",person);
 
                 //If we don't already have this item
@@ -120,8 +118,7 @@ namespace CopsAndThieves
 
             }
 
-            person.FirstName = fname;
-            person.SurName = sName;
+            //Assign names to this person so we can spawn them later
             person.Sprite = sprite;
 
 
@@ -129,19 +126,12 @@ namespace CopsAndThieves
         }
         public static Theif GenerateRandomTheif()
         {
-            //Random instance thing to use
-            Random random = new Random();
-
             //First name is this names(withIndex)
             string fname = GetFirstName();
             string sName = GetSurName();
 
             //Creating something to return
             Theif person = new Theif(fname, sName);
-
-            person.FirstName = fname;
-            person.SurName = sName;
-
 
             return person;
         }

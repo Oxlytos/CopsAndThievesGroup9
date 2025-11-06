@@ -8,6 +8,7 @@ namespace CopsAndThieves
 {
     public class NewsFeed
     {
+        //Just all the stats that we're gonna print and user later for the users convenience
         public DateTime SimulationDate {  get; set; }
         public int CitizensAmount { get; set; } = 0;
         public int PoliceAmount { get; set; } = 0;
@@ -90,12 +91,15 @@ namespace CopsAndThieves
             //Then print
             Console.Write(UpdateCityStatistics());
 
-
+            //Not really needed, a bit more convenient
             string actionFeed = "ACTIONS FEED!";
             string greetFeed = "GREETS FEED!";
 
+            //Move to the left of the screen, and then print ACTION feed
             Console.SetCursorPosition(0, y+2);
             Console.Write(actionFeed);
+
+            //To the middle of the screen, write GREET
             Console.SetCursorPosition(halfOfTheScreen, y+2);
             Console.Write(greetFeed);
 
@@ -124,6 +128,7 @@ namespace CopsAndThieves
             Console.ForegroundColor = ConsoleColor.White;
 
         }
+        //Updates the stats, was not fun to try and handle this
         string UpdateCityStatistics()
         {
 

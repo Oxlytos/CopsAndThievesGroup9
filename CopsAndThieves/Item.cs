@@ -24,7 +24,7 @@ namespace CopsAndThieves
     }
     class CivilianItem : Item
     {
-        static string[] itemNames = { "📱Phone", "🔑Keys", "👛Wallet", "⌚Watch" };
+        static string[] itemNames = { "📱 Phone", "🔑 Keys", "👛 Wallet", "⌚ Watch" };
         public CivilianItem(string _name, Person _orgOwner) : base(_name, _orgOwner)
         {
             _name = itemNames[random.Next(0, itemNames.Length)];
@@ -35,7 +35,7 @@ namespace CopsAndThieves
 
     class PoliceItem : Item
     {
-        static string[] itemNames = { "🔫Gun", "🦯Baton", "🎖️Badge", "📱Phone" };
+        static string[] itemNames = { "🔫 Gun", "🦯 Baton", "🎖️ Badge", "📱 Phone" };
         public PoliceItem(string _name, Person _orgOwner) : base(_name, _orgOwner)
         {
             _name = itemNames[random.Next(0, itemNames.Length)];

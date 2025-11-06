@@ -8,7 +8,7 @@ namespace CopsAndThieves
 {
     public class Person
     {
-
+        //Base person stuff
         public string FirstName { get; set; }
         public string SurName { get; set; }
 
@@ -26,11 +26,14 @@ namespace CopsAndThieves
         //Old position for clearing
         public int OldPosX, OldPosY;
 
+        //Where we spawn
         public void SpawnRandomPosition(int mapX, int mapY)
         {
+            //3 spawns a person a bit to the right of the left most wall and below top most wall
             int x = rand.Next(3, mapX);
             int y = rand.Next(3, mapY);
 
+            //These are the coordinates that we'll write them on later
             PosX = x;
             PosY = y;
         }
@@ -38,6 +41,7 @@ namespace CopsAndThieves
         //Greet another person
         public virtual string Greet(Person other, int x, int y)
         {
+            //Get a lil greeting
             string randomGreet = RandomGreet();
             string theGreet = $"{this.Sprite}💬 {this.FirstName} {this.SurName} greets {other.Sprite} {other.FirstName} at x:{x} y:{y}: \"{randomGreet}\"";
             return theGreet;
@@ -45,6 +49,7 @@ namespace CopsAndThieves
 
         string RandomGreet()
         {
+            //Real basic greetings
             string[] greets = {
                     "Hey!",
                     "Hi!",
@@ -80,6 +85,7 @@ namespace CopsAndThieves
         
 
        
+        //Base class move that everyone besides an inprisoned theif can do
         public virtual void Move(int maxX, int maxY)
         {
             //Before we change position, store old position
@@ -90,13 +96,11 @@ namespace CopsAndThieves
             int x = rand.Next(-1, 2);
             int y = rand.Next(-1, 2);
 
-            //Change delta
+            //Change delta aka position
              PosX += x;
              PosY += y;
             //Console.WriteLine($"Trying to move with x: {x} and y: {y}");
             //Limits class that checks if said person can walk there, don't cross city limits
-
-
             //Check if crossing limits
             if (PosX < 1)
             {
@@ -128,10 +132,13 @@ namespace CopsAndThieves
         }
     }
 
+    //The police are people in this simulation
     public class Police : Person
     {
+        //They have the unique property of a confiscated list of items
         public List<Item> ConfiscatedItems = new List<Item>();
 
+        //All police share the same sprite
         public Police(string fName, string sName)
         {
 
@@ -140,16 +147,17 @@ namespace CopsAndThieves
             Sprite = "👮";
         }
 
-        //Standard police greets citizen
+        //Standard police greets citizen 
         public override string Greet(Person citizen, int x, int y)
         {
-            
             string randoGreet = RandomGreet();
             string greet = $"{this.Sprite} Officer {this.FirstName} greets {citizen.Sprite} {citizen.FirstName}: \"{randoGreet}\"";
             return greet;
             
 
         }
+
+        //Police to police
         public string PoliceGreet(Police otherOfficer, int x, int y)
         {
             string randoGreet = RandomGreet(otherOfficer);
@@ -158,18 +166,20 @@ namespace CopsAndThieves
 
         }
 
-
         //Arrest a criminal
         public string Arrest(Theif arrestTarget)
         {
+            //Make sure we're not imprisoning someone who haven't commited a crime yet, that'd be illegal
             if (arrestTarget.Inventory.Count > 0 && !arrestTarget.inPrison) 
             {
+                //Send em' to prison
                 arrestTarget.inPrison = true;
                 arrestTarget.HoursInPrison = 10*arrestTarget.Inventory.Count;
                 return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
             }
             else
             {
+                //Don't
                 return null;
             }
            
@@ -186,7 +196,8 @@ namespace CopsAndThieves
                 //10 hours * how much was stolen
                 int time = 10 * amountOfItems;
 
-                //Add the vhieves inventory to the police's, the confiscated could grow endless?
+                //Add the vhieves inventory to the police's, the confiscated list could grow endless?
+                //In cops and theives 2, add a depo to deposit confiscated items
                 ConfiscatedItems.AddRange(arrestedTheif.Inventory);
 
                 // Clear the inventory
@@ -242,18 +253,18 @@ namespace CopsAndThieves
 
             return greet;
         }
-
-
-
-
     }
 
+    //Theives are people
     public class Theif : Person
     {
+        //The unique property to be jailed
         public bool inPrison = false;
 
+        //Prison sentence
         public int HoursInPrison {  get; set; }
 
+        //Returning the release date for later
         DateTime RelaseDate { get; set; }
 
         public Theif(string fName, string sName)
@@ -274,9 +285,9 @@ namespace CopsAndThieves
             return RelaseDate;
         }
         //Steal from a citizen
+        //We check in the simulation if they've got any items
         public string Steal(Citizen cit)
         {
-
             int RandomIndex = rand.Next(0, cit.Inventory.Count);
             Item stolenItem;
             stolenItem = cit.Inventory[RandomIndex];
@@ -289,10 +300,8 @@ namespace CopsAndThieves
 
         public void Move(int minX, int maxX, int minY, int maxY)
         {
-
             if (inPrison)
             {
-
               //  Console.WriteLine("I should be in prison...");
                 PrisonMove(minX,maxX,minY,maxY);
             }
@@ -303,6 +312,7 @@ namespace CopsAndThieves
 
         }
 
+        //The big difference is just that the prison has other coordinates and that we inlucde min values for clarities sake
         void PrisonMove(int minX, int maxX, int minY, int maxY)
         {
             //Before we change position, store old position
@@ -327,6 +337,7 @@ namespace CopsAndThieves
         }
     }
 
+    //Citizens use the base class greets when talking to other Citizens
     public class Citizen : Person
     {
         public Citizen(string fName, string sName)
@@ -336,7 +347,30 @@ namespace CopsAndThieves
         }
 
         //Citizens greet either another citizen or a cop
-        void Greet() { }
+        public string Greet(Police officer, int x, int y)
+        {
+            string randoGreet = RandomGreet(officer);
+            string greet = $"{this.Sprite} {this.FirstName} greets officer {officer.Sprite} {officer.FirstName}: \"{randoGreet}\"";
+            return greet;
+
+        }
+        //Citizen to police
+        static string RandomGreet(Police otherOfficer)
+        {
+            string[] greets = {
+               "Pig!",
+               "Sup coppo",
+               "ACAB!",
+               "Officer...",
+               "Order and justice!"
+            };
+
+            //Index in relation to total length of the array
+            int greetIndex = rand.Next(greets.Length);
+            string greet = greets[greetIndex];
+
+            return greet;
+        }
     }
 }
    
