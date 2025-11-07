@@ -22,6 +22,7 @@ namespace CopsAndThieves
         }
 
     }
+    //Standard stuff really, emojiis for the fun factor
     class CivilianItem : Item
     {
         static string[] itemNames = { "📱 Phone", "🔑 Keys", "👛 Wallet", "⌚ Watch" };
@@ -33,6 +34,10 @@ namespace CopsAndThieves
         }
     }
 
+    //Some other group had knives for theives, so a subsection of TheifItem : Item could be fun
+
+    //If we ever wanted to explore the possibilites of more intrinsic law enforcment in this simulation
+    //Police have their own items
     class PoliceItem : Item
     {
         static string[] itemNames = { "🔫 Gun", "🦯 Baton", "🎖️ Badge", "📱 Phone" };

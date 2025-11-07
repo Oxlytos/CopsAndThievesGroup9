@@ -170,16 +170,17 @@ namespace CopsAndThieves
         public string Arrest(Theif arrestTarget)
         {
             //Make sure we're not imprisoning someone who haven't commited a crime yet, that'd be illegal
-            if (arrestTarget.Inventory.Count > 0 && !arrestTarget.inPrison) 
+            if (arrestTarget.Inventory.Count > 0 && !arrestTarget.InPrison) 
             {
                 //Send em' to prison
-                arrestTarget.inPrison = true;
+                arrestTarget.InPrison = true;
                 arrestTarget.HoursInPrison = 10*arrestTarget.Inventory.Count;
                 return $"{this.Sprite}💬 I'm putting you away! {arrestTarget.Sprite} {arrestTarget.FirstName}";
             }
             else
             {
                 //Don't
+                //Could return a greet with (Officer is supusious of this indivudual or something, but there's already so many greets
                 return null;
             }
            
@@ -194,6 +195,7 @@ namespace CopsAndThieves
                 int amountOfItems = arrestedTheif.Inventory.Count();
 
                 //10 hours * how much was stolen
+                //Could be handled in another method for clarities sake like static int SetPrisonTime()
                 int time = 10 * amountOfItems;
 
                 //Add the vhieves inventory to the police's, the confiscated list could grow endless?
@@ -206,6 +208,7 @@ namespace CopsAndThieves
             }
             else
             {
+                //I'd be amazed if we end up here
                 return null;
             }
         }
@@ -259,7 +262,7 @@ namespace CopsAndThieves
     public class Theif : Person
     {
         //The unique property to be jailed
-        public bool inPrison = false;
+        public bool InPrison = false;
 
         //Prison sentence
         public int HoursInPrison {  get; set; }
@@ -294,19 +297,21 @@ namespace CopsAndThieves
            // this.Inventory = new List<string>();
 
             this.Inventory.Add(stolenItem);
-            cit.Inventory.RemoveAt(RandomIndex);
+            cit.Inventory.Remove(stolenItem);
             return $"{this.Sprite} {this.FirstName} has stolen {stolenItem.Name} from {cit.FirstName}";
         }
 
+        //Prisoners move checks if they're in prison where they move with other params
         public void Move(int minX, int maxX, int minY, int maxY)
         {
-            if (inPrison)
+            if (InPrison)
             {
               //  Console.WriteLine("I should be in prison...");
                 PrisonMove(minX,maxX,minY,maxY);
             }
             else
             {
+                //Base class roam around the city
                 base.Move(mapX, mapY);
             }
 

@@ -12,7 +12,7 @@ namespace CopsAndThieves
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Console.WriteLine("Ser du detta har jag commitat från en annan dator och pushat några skillnader");
+            Console.WriteLine("\"Use the program in fullscreen for smoothest possible experience\"");
             CitySimulation.Run();
         }
 

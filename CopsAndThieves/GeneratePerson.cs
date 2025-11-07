@@ -70,22 +70,6 @@ namespace CopsAndThieves
 
 
         //Generate basic person with random name
-        public static Person GenerateRandomPerson()
-        {
-            //Creating something to return
-            Person person = new Person();
-            //First name is this names(withIndex)
-            string fname =  GetFirstName();
-            string sName = GetSurName();
-            string sprite = RandomSprite();
-
-            person.FirstName = fname;
-            person.SurName = sName;
-            person.Sprite = sprite; 
-            
-            return person;
-        }
-
         public static Citizen GenerateRandomCititzen()
         {
            
@@ -109,8 +93,10 @@ namespace CopsAndThieves
                 //Get a lil civilian item
                 Item civItem = new CivilianItem("",person);
 
+                bool checkIfDuplicate = person.Inventory.Any(i => i.Name == civItem.Name);
+
                 //If we don't already have this item
-                if (!person.Inventory.Contains(civItem))
+                if (!checkIfDuplicate)
                 {
                     //Add that item
                     person.Inventory.Add(civItem);
@@ -163,18 +149,18 @@ namespace CopsAndThieves
                 //Dummy item class for testing
                 PoliceItem polItem = new PoliceItem("", pol);
 
+                bool checkIfDuplicate = pol.Inventory.Any(i => i.Name == polItem.Name);
+
                 //If we don't already have this item
-                if (!pol.Inventory.Contains(polItem))
+                if (!checkIfDuplicate)
                 {
                     //Add that item
                     pol.Inventory.Add(polItem);
                 }
-            
             }
 
             return pol;
         }
-
         //Return a string with a name
         static string GetFirstName()
         {

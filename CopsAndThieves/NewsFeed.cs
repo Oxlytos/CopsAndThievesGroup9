@@ -41,8 +41,10 @@ namespace CopsAndThieves
         //When creating a new message
         public void AddGreet(string msg)
         {
+            //Console.Beep();
             //Add it to the list
-            greets.Add(msg);
+            string msgAndDate = $"{SimulationDate.ToString("dd-HH")}  {msg}";
+            greets.Add(msgAndDate);
 
             //If more than X messages
             if (greets.Count > maxMessages) 
@@ -56,7 +58,10 @@ namespace CopsAndThieves
         //For all the actions
         public void AddImportant(string msg)
         {
-            actions.Add(msg);
+            //Console.Beep();
+            string msgAndDate = $"{SimulationDate.ToString("dd-HH")}  {msg}";
+
+            actions.Add(msgAndDate);
 
             //If more than X messages
             if (actions.Count > maxMessages)
@@ -111,7 +116,7 @@ namespace CopsAndThieves
                     //Yellow text to signal that these may be more important
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     //Move cursor to the left, with start Pos from bottom of the jail, with an offset, and with the message count
-                    //Aka move with a scroll based on the Message[f], where newer are at the bottom
+                    //Aka move with a scroll based on the Message[f], where newer ones are at the bottom
                     Console.SetCursorPosition(0, y + messageOffsetY + f);
                     Console.Write(actions[f]);
                 }
